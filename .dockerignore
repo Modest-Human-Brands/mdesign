@@ -1,37 +1,15 @@
-# Code Editor files
-.vs
-.vscode
-
-# Git/Github
+# Keep the build context small and, above all, keep local secrets out of the image:
+# Vite would otherwise read .env during `bun run build` and bake the values into the bundle.
+node_modules
+dist
 .git
 .github
-
-# Nuxt dev/build outputs
-.cache
-.data
-.nuxt
-.nitro
-.output
-dist
-
-# Node dependencies
-node_modules
-
-# Logs
-logs
+.husky
+.vscode
+.claude
+figma
+postman
+.env
+.env.*
+!.env.example
 *.log
-
-# Test
-coverage
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Env files
-.env*
-
-# Docker files
-.dockerignore
-Dockerfile

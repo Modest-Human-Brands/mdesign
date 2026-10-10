@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "vitest.explorer",
+    "EditorConfig.EditorConfig",
+    "oxc.oxc-vscode",
+    "VoidZero.vite-plus-extension-pack"
+  ]
+}

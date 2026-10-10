@@ -2,42 +2,31 @@ FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
-COPY nitro.config.ts ./
+ARG SITE_URL
 
-ENV NITRO_PRESET=node-server
-ENV NITRO_PUBLIC_SITE_URL=$SITE_URL
+COPY package.json bun.lock ./
+
+ENV VITE_PUBLIC_SITE_URL=$SITE_URL
 
 RUN bun install --frozen-lockfile
 
 COPY . .
+
 RUN bun run build
 
-RUN mkdir -p .output/server/node_modules && \
-  cp -R node_modules/@napi-rs .output/server/node_modules/ && \
-  cp -R node_modules/sharp .output/server/node_modules/ && \
-  cp -R node_modules/@img .output/server/node_modules/ && \
-  cp -R node_modules/detect-libc .output/server/node_modules/ && \
-  cp -R node_modules/semver .output/server/node_modules/ && \
-  cp -R node_modules/css-tree .output/server/node_modules/ && \
-  cp -R node_modules/mdn-data .output/server/node_modules/ && \
-  cp -R node_modules/source-map-js .output/server/node_modules/
-
-FROM node:22-alpine AS runner
+FROM nginx:alpine AS runner
 
 ARG VERSION
 ARG BUILD_TIME
 
-WORKDIR /app
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-RUN apk add --no-cache fontconfig freetype ttf-liberation ttf-dejavu
-
-COPY --from=builder /app/.output ./.output
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 ENV NODE_ENV=production
-ENV NITRO_APP_VERSION=$VERSION
-ENV NITRO_APP_BUILD_TIME=$BUILD_TIME
+ENV VUE_APP_VERSION=$VERSION
+ENV VUE_APP_BUILD_TIME=$BUILD_TIME
 
-EXPOSE 3000
+EXPOSE 8080
 
-ENTRYPOINT ["node", ".output/server/index.mjs"]
+CMD ["nginx", "-g", "daemon off;"]
