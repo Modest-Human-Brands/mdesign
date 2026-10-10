@@ -13,6 +13,7 @@ import {
 } from '@/domain/organization'
 import { organizationFormSchema } from '@/domain/organizationForm'
 import { parseSchemaToJsonSchema } from '@/domain/schemaConverter'
+import { tokensFor } from '@/domain/tokens'
 import {
   emptyValue,
   schemaDefaults,
@@ -70,7 +71,9 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
     templateId.value ? (getTemplate(templateId.value) ?? null) : null,
   )
   const schema = computed<JsonSchema | null>(() =>
-    template.value ? parseSchemaToJsonSchema(template.value.schema) : null,
+    template.value
+      ? parseSchemaToJsonSchema(template.value.schema, template.value.placeholders)
+      : null,
   )
   const formSchema = computed(() =>
     schema.value ? buildFormSchema(schema.value) : emptyFormSchema,
@@ -95,12 +98,15 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
     schema.value ? validateForm(formSchema.value, values) : [],
   )
 
-  /** Props for the template component: form values over the sample copy, plus the organisation's branding. */
+  const pageCount = computed(() => template.value?.pages ?? 1)
+
+  /** Props for the template component: form values over `{{Field Label}}` tokens, plus the organisation's branding. */
   const renderedProps = computed<Record<string, unknown>>(() => {
     const active = template.value
     if (!active || !schema.value) return {}
     const payload = (toPayload(schema.value, values) ?? {}) as Values
-    return active.transformPayload(mergeOver(active.placeholders, payload) as Values, organization)
+    const tokens = tokensFor(active.id, active.schema, active.placeholders)
+    return active.transformPayload(mergeOver(tokens, payload) as Values, organization)
   })
 
   function selectTemplate(id: string | null) {
@@ -113,12 +119,8 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
       form.reset({})
       return
     }
-    const json = parseSchemaToJsonSchema(next.schema)
-    const initial = withDefaults(
-      next.placeholders,
-      withDefaults(schemaDefaults(json), emptyValue(json)),
-    ) as Values
-    form.reset(initial)
+    const json = parseSchemaToJsonSchema(next.schema, next.placeholders)
+    form.reset(withDefaults(schemaDefaults(json), emptyValue(json)) as Values)
   }
 
   function setValue(path: (string | number)[], value: unknown) {
@@ -168,6 +170,7 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
     problems,
     submitAttempted,
     renderedProps,
+    pageCount,
     selectTemplate,
     setValue,
     saveOrganizationProfile,

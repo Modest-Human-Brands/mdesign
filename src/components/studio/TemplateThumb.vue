@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { tokensFor } from '@/domain/tokens'
 import { useDesignWizardStore } from '@/stores/designWizard'
 import type { DesignTemplateDefinition } from '@templates/types'
 
@@ -22,7 +23,10 @@ const size = computed(() => ({
   height: props.template.resolution.height * scale.value,
 }))
 const payload = computed(() =>
-  props.template.transformPayload(props.template.placeholders, wizard.organization),
+  props.template.transformPayload(
+    tokensFor(props.template.id, props.template.schema, props.template.placeholders),
+    wizard.organization,
+  ),
 )
 </script>
 

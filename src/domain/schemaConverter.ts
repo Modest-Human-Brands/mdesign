@@ -33,15 +33,19 @@ function columnSpan(key: string, node: JsonSchema): number {
  * Converts a template's Zod schema to the JSON Schema dialect the form engine renders:
  * adds titles, `x-section` for top-level groups, and `x-order` / `x-column` layout hints.
  */
-export function parseSchemaToJsonSchema(schema: z.ZodType): JsonSchema {
+export function parseSchemaToJsonSchema(
+  schema: z.ZodType,
+  placeholders: Record<string, unknown> = {},
+): JsonSchema {
   const raw = z.toJSONSchema(schema, { unrepresentable: 'any' }) as JsonSchema
 
-  function enrich(node: JsonSchema, depth: number): JsonSchema {
+  function enrich(node: JsonSchema, depth: number, sample: unknown): JsonSchema {
     if (node.type === 'object' && node.properties) {
       const properties: Record<string, JsonSchema> = {}
+      const values = (sample ?? {}) as Record<string, unknown>
       let order = 1
       for (const [key, child] of Object.entries(node.properties)) {
-        const enriched = enrich(child, depth + 1)
+        const enriched = enrich(child, depth + 1, values[key])
         enriched.title ??= humanize(key)
         if (depth === 0 && enriched.type === 'object') enriched['x-section'] = humanize(key)
         enriched['x-column'] = columnSpan(key, enriched)
@@ -50,10 +54,23 @@ export function parseSchemaToJsonSchema(schema: z.ZodType): JsonSchema {
       }
       return { ...node, properties }
     }
-    if (node.type === 'array' && node.items)
-      return { ...node, items: enrich(node.items, depth + 1) }
+    if (node.type === 'array' && node.items) {
+      const first = Array.isArray(sample) ? (sample[0] as unknown) : undefined
+      return { ...node, items: enrich(node.items, depth + 1, first) }
+    }
+
+    // Only values that must start filled become form defaults: enums, numbers, booleans and image / decor pickers.
+    // Text starts empty and previews as a {{Field Label}} token until the user fills it.
+    const defaultable =
+      node.enum || node.type === 'number' || node.type === 'boolean' || node['x-widget']
+    if (
+      defaultable &&
+      (typeof sample === 'string' || typeof sample === 'number' || typeof sample === 'boolean')
+    ) {
+      return { ...node, default: sample }
+    }
     return node
   }
 
-  return enrich(raw, 0)
+  return enrich(raw, 0, placeholders)
 }

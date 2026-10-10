@@ -22,10 +22,13 @@ export interface DesignTemplateDefinition {
   shortLabel: string
   category: TemplateCategory
   description: string
+  /** Size of one page in design pixels. */
   resolution: OutputResolution
+  /** Number of pages (default 1). Multi-page components receive a zero-based `page` prop. */
+  pages?: number
   component: Component
   schema: z.ZodObject<z.ZodRawShape>
-  /** Sample copy: prefilled into the form and used wherever a field is left empty. */
+  /** Sample values: enum / picker defaults for the form and the data the schema is tested against. */
   placeholders: TemplateValues
   /** Props handed to `component`: the form values merged with the organisation's branding. */
   transformPayload: (

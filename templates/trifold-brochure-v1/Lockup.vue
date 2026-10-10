@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
-// Logo + uppercase business name. Without a logo a grey "LOGO" circle holds the place.
-const props = defineProps<{ name: string; logo: string; color: string }>()
+// Logo + uppercase business name. Without a logo an accent-coloured circle holds the place.
+const props = defineProps<{ name: string; logo: string; color: string; accent: string }>()
 
 const SIZE = 40
-const label = computed(() => Math.max(4, SIZE * 0.16))
 </script>
 
 <template>
@@ -30,17 +27,9 @@ const label = computed(() => Math.max(4, SIZE * 0.16))
         height: `${SIZE}px`,
         marginRight: '8px',
         borderRadius: '999px',
-        backgroundColor: '#D9D9D9',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: `${label}px`,
-        fontWeight: 700,
-        color: '#888888',
+        backgroundColor: accent,
       }"
-    >
-      LOGO
-    </div>
+    />
     <span
       :style="{
         flex: 1,

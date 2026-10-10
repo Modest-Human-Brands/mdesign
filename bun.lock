@@ -18,6 +18,7 @@
         "@commitlint/config-conventional": "^21.2.3",
         "@fontsource-variable/exo-2": "^5.3.0",
         "@iconify-json/lucide": "^1.2.142",
+        "@iconify-json/simple-icons": "^1.2.99",
         "@tailwindcss/vite": "^4.3.3",
         "@tsconfig/node24": "^24.0.5",
         "@types/jsdom": "^30.0.0",
@@ -179,6 +180,8 @@
     "@fontsource-variable/exo-2": ["@fontsource-variable/exo-2@5.3.0", "", {}, "sha512-KgmRT6/E6y/ZwFcGnlFrFoKkizPcWtpDh1q1KlxLNA7NJWaSP4Y+nWGRlnRBiGZ8yybF8DhEWNldmDhOZkzMAQ=="],
 
     "@iconify-json/lucide": ["@iconify-json/lucide@1.2.142", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-vEGX5X52/l77jRMcmxXk3PiEebldDUs8WFdM8X3Evq1S9p5F+o0VZhx8sqaQsmFEB9Ukp5ND5Q/0g2kQ/LF+rQ=="],
+
+    "@iconify-json/simple-icons": ["@iconify-json/simple-icons@1.2.99", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-kouZhqvUoNdxEe+lZksbJJZMCZv4b4Ob62O1GW3fcpz/I0mVPzM+9/Qf/DUuv5ns8l6c46D8M/ubhJjjbLp9HQ=="],
 
     "@iconify/types": ["@iconify/types@2.0.0", "", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 

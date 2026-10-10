@@ -27,11 +27,11 @@ describe('template registry', () => {
     '%s has valid placeholders and a form schema',
     (_id, template) => {
       expect(template.schema.safeParse(template.placeholders).success).toBe(true)
-      const json = parseSchemaToJsonSchema(template.schema)
+      const json = parseSchemaToJsonSchema(template.schema, template.placeholders)
       expect(json.type).toBe('object')
       expect(Object.keys(json.properties ?? {}).length).toBeGreaterThan(0)
       const props = template.transformPayload(template.placeholders, emptyOrganization())
-      expect(props.organizationName).toBe('Your Company')
+      expect(props.organizationName).toBe('{{Business Name}}')
       expect(props.gradient).toContain('radial-gradient')
     },
   )

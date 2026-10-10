@@ -12,6 +12,8 @@ MDesign is a static Vue 3 SPA (Vite, Pinia, Tailwind CSS v4, notform + Zod). The
 
 - **Templates are Vue SFCs.** Each folder in `templates/` (project root) holds a `Component.vue` (the design, plain Vue + Tailwind) and an `index.ts` (metadata, resolution, Zod schema, sample placeholders, `transformPayload`). `registry.ts` discovers them with `import.meta.glob`, so adding a folder adds a template.
 - **Forms come from the schema.** `parseSchemaToJsonSchema()` converts a template's Zod schema to JSON Schema with layout hints; `SchemaFields` renders it and the same schema validates it.
+- **Token previews.** Until a field is filled, the design shows its own label as `{{Field Label}}` (built from the schema by `src/domain/tokens.ts`; brand fields show `{{Business Name}}`, `{{Phone}}`, ...), so it is clear what is dynamic and what it will contain.
+- **Multi-page designs.** A template can set `pages: 2` (or more); its component receives a zero-based `page` prop. The stage shows the pages stacked and scrollable like a PDF, and export produces one tall image with spacing between pages for printing.
 - **Instant preview.** The active template component is rendered at its design resolution inside `StageViewport` and scaled with CSS. Typing updates it synchronously.
 - **Auto-branded gradients.** `generateProceduralGradient(primary, accent)` derives a balanced HSL mesh from the brand colours (`src/domain/proceduralGradient.ts`).
 - **Export in the browser.** `exportElementToBlob()` serialises the design into an SVG `<foreignObject>` with the page CSS and used fonts embedded as data URIs, then draws it on a canvas for PNG / WebP / JPEG, or returns the SVG directly (`src/domain/imageExport.ts`).

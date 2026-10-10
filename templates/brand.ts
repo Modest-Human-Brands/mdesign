@@ -1,5 +1,6 @@
 import { generateProceduralGradient, normalizeHex, onColor } from '@/domain/proceduralGradient'
 import type { OrganizationProfile } from '@/domain/organization'
+import { token } from '@/domain/tokens'
 
 export interface BrandProps {
   organizationName: string
@@ -22,13 +23,14 @@ const stack = (family: string) =>
 
 /** Flattens the organisation profile into the brand props every template shares. */
 export function brandProps(org: OrganizationProfile): BrandProps {
-  const name = org.name.trim() || 'Your Company'
+  const realName = org.name.trim()
+  const name = realName || token('Business Name')
   const primary = normalizeHex(org.primary)
   const accent = normalizeHex(org.accent, '#5945ea')
 
   return {
     organizationName: name,
-    organizationInitial: name.charAt(0).toUpperCase(),
+    organizationInitial: (realName || 'B').charAt(0).toUpperCase(),
     organizationLogo: org.logo?.dataUrl ?? '',
     organizationFont: stack(org.font || 'Exo 2'),
     colorPrimary: primary,
@@ -36,13 +38,14 @@ export function brandProps(org: OrganizationProfile): BrandProps {
     onPrimary: onColor(primary),
     onAccent: onColor(accent),
     gradient: generateProceduralGradient(primary, accent).cssStyle,
-    organizationPhone: org.phone.trim(),
-    organizationEmail: org.contactEmail.trim(),
-    organizationWebsite: org.website
-      .trim()
-      .replace(/^https?:\/\//, '')
-      .replace(/\/$/, ''),
-    organizationAddress: org.address.trim(),
+    organizationPhone: org.phone.trim() || token('Phone'),
+    organizationEmail: org.contactEmail.trim() || token('Contact Email'),
+    organizationWebsite:
+      org.website
+        .trim()
+        .replace(/^https?:\/\//, '')
+        .replace(/\/$/, '') || token('Website'),
+    organizationAddress: org.address.trim() || token('Address'),
   }
 }
 
@@ -53,3 +56,5 @@ export const list = (value: unknown, max: number): string[] =>
   (Array.isArray(value) ? value : [])
     .filter((item): item is string => typeof item === 'string' && item.trim() !== '')
     .slice(0, max)
+/** Re-exported so templates can tell a real value from a `{{Field Label}}` placeholder. */
+export { isToken, realText } from '@/domain/tokens'

@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { resolveDecor } from '@/domain/decor'
 import { SOCIAL_KEYS } from '@/domain/organization'
+import { SOCIAL_LABELS, socialEntries } from '@/domain/social'
+import { realText, token } from '@/domain/tokens'
 
 import { brandProps, list, text } from '../brand'
 import type { DesignTemplateDefinition } from '../types'
@@ -10,7 +12,6 @@ import Component from './Component.vue'
 const textBlock = z.object({ heading: z.string().min(1), text: z.string().min(1) })
 
 export const schema = z.object({
-  side: z.enum(['outside', 'inside']),
   cover: z.object({
     eyebrow: z.string().optional(),
     title: z.string().min(1, 'Title is required'),
@@ -40,7 +41,6 @@ export const schema = z.object({
 })
 
 const placeholders = {
-  side: 'outside',
   cover: {
     eyebrow: 'Capabilities 2026',
     title: 'Stories worth watching',
@@ -84,8 +84,9 @@ export default {
   shortLabel: 'Brochure',
   category: 'Collateral',
   description:
-    'A two-sided A4 landscape tri-fold: outside (flap, contact, cover) and inside (spread with services).',
+    'A two-page A4 landscape tri-fold: page 1 outside (flap, contact, cover) and page 2 inside (spread with services).',
   resolution: { width: 2480, height: 1748, aspectRatio: '2480 / 1748', dpi: 300 },
+  pages: 2,
   component: Component,
   schema,
   placeholders,
@@ -98,14 +99,20 @@ export default {
           ? brand.colorAccent
           : undefined
 
-    const socialInitials = SOCIAL_KEYS.filter((key) => org.socials[key].trim() !== '')
-      .slice(0, 4)
-      .map((key) => key.charAt(0).toUpperCase())
+    // Icon + username inferred from each profile link; with no links yet every network shows its token
+    const filled = socialEntries(org.socials)
+    const socials =
+      filled.length > 0
+        ? filled
+        : SOCIAL_KEYS.map((key) => ({
+            key,
+            label: SOCIAL_LABELS[key],
+            handle: token(`${SOCIAL_LABELS[key]} Username`),
+          }))
 
     return {
       ...brand,
-      side: values.side === 'inside' ? 'inside' : 'outside',
-      socialInitials,
+      socials,
       leafImageUrl: resolveDecor(values.decor?.image, tint),
       coverEyebrow: text(values.cover?.eyebrow),
       coverTitle: text(values.cover?.title),
@@ -118,7 +125,7 @@ export default {
       serviceImageUrl: resolveDecor(values.services?.imageUrl),
       serviceImageCaption: text(values.services?.imageCaption),
       ctaLabel: text(values.callToAction?.label),
-      ctaPhone: text(values.callToAction?.phone) || brand.organizationPhone,
+      ctaPhone: realText(values.callToAction?.phone) || brand.organizationPhone,
       ctaNote: text(values.callToAction?.note),
       ctaSocialLabel: text(values.callToAction?.socialLabel),
     }

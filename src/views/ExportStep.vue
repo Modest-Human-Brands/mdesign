@@ -8,7 +8,7 @@ import UiSegmentedControl from '@/components/ui/UiSegmentedControl.vue'
 import UiTextField from '@/components/ui/UiTextField.vue'
 import WizardShell from '@/components/wizard/WizardShell.vue'
 import { safeFileName, saveBlob } from '@/domain/download'
-import { exportElementToBlob, type ExportFormat } from '@/domain/imageExport'
+import { exportPagesToBlob, pageSpacing, type ExportFormat } from '@/domain/imageExport'
 import { STEPS, useDesignWizardStore } from '@/stores/designWizard'
 
 defineOptions({ name: 'ExportStep' })
@@ -25,7 +25,7 @@ const FORMATS: { value: ExportFormat; label: string }[] = [
 ]
 
 const format = ref<ExportFormat>('png')
-const scale = ref('2')
+const scale = ref('')
 const fileName = ref('')
 const busy = ref(false)
 const error = ref<string | null>(null)
@@ -35,33 +35,55 @@ const template = computed(() => wizard.template)
 const label = computed(() => template.value?.label ?? 'Design')
 const defaultName = computed(() => `${template.value?.id ?? 'design'}`)
 
-// 1x is the design size; the "print" option reaches 300 DPI from the 72 DPI design grid
-const SCALES = computed(() => [
-  { value: '1', label: '1x' },
-  { value: '2', label: '2x' },
-  { value: '4.1667', label: '300 DPI' },
-])
+// 1x is the design size. Designs authored below 300 DPI get a print option that reaches 300 DPI.
+const designDpi = computed(() => template.value?.resolution.dpi ?? 72)
+const SCALES = computed(() => {
+  const options = [
+    { value: '1', label: designDpi.value >= 300 ? '1x (300 DPI)' : '1x' },
+    { value: '2', label: '2x' },
+  ]
+  if (designDpi.value < 300) {
+    options.push({
+      value: String(Math.round((300 / designDpi.value) * 1000) / 1000),
+      label: '300 DPI',
+    })
+  }
+  return options
+})
+const activeScale = computed(() => scale.value || (designDpi.value >= 300 ? '1' : '2'))
+
+const scaleModel = computed({
+  get: () => activeScale.value,
+  set: (value: string) => (scale.value = value),
+})
+
+const pageCount = computed(() => wizard.pageCount)
 
 const outputSize = computed(() => {
   const resolution = template.value?.resolution
   if (!resolution) return ''
-  const factor = format.value === 'svg' ? 1 : Number(scale.value)
-  return `${Math.round(resolution.width * factor)} × ${Math.round(resolution.height * factor)} px`
+  const factor = format.value === 'svg' ? 1 : Number(activeScale.value)
+  const spacing = pageCount.value > 1 ? pageSpacing(resolution.width) : 0
+  const width = resolution.width + spacing * 2
+  const height =
+    pageCount.value * resolution.height +
+    (pageCount.value > 1 ? (pageCount.value + 1) * spacing : 0)
+  return `${Math.round(width * factor)} × ${Math.round(height * factor)} px`
 })
 
 async function download() {
-  const element = stage.value?.getCaptureElement()
+  const elements = stage.value?.getCaptureElements() ?? []
   const active = template.value
-  if (!element || !active) return
+  if (elements.length === 0 || !active) return
   busy.value = true
   error.value = null
   try {
-    const blob = await exportElementToBlob({
-      element,
-      width: active.resolution.width,
-      height: active.resolution.height,
+    const blob = await exportPagesToBlob({
+      elements,
+      pageWidth: active.resolution.width,
+      pageHeight: active.resolution.height,
       format: format.value,
-      scale: Number(scale.value),
+      scale: Number(activeScale.value),
     })
     const base = safeFileName(fileName.value || defaultName.value, 'design').replace(
       /\.(png|webp|jpe?g|svg)$/i,
@@ -86,7 +108,7 @@ async function download() {
     <UiSegmentedControl v-model="format" label="Format" :options="FORMATS" />
     <UiSegmentedControl
       v-if="format !== 'svg'"
-      v-model="scale"
+      v-model="scaleModel"
       label="Resolution"
       :options="SCALES"
     />
@@ -99,7 +121,12 @@ async function download() {
       </div>
       <div class="flex gap-4 border-b border-dark-600 px-3 py-2.5">
         <dt class="w-28 shrink-0 text-sm text-light-400">Output size</dt>
-        <dd class="text-sm text-white">{{ outputSize }}</dd>
+        <dd class="text-sm text-white">
+          {{ outputSize
+          }}<span v-if="pageCount > 1" class="text-light-400">
+            · {{ pageCount }} pages stacked with spacing for print</span
+          >
+        </dd>
       </div>
       <div class="flex gap-4 px-3 py-2.5">
         <dt class="w-28 shrink-0 text-sm text-light-400">Last file</dt>

@@ -192,3 +192,60 @@ export async function exportElementToBlob(options: ExportOptions): Promise<Blob>
     )
   })
 }
+export interface PagesExportOptions {
+  /** The rendered pages at full design resolution, in order. */
+  elements: HTMLElement[]
+  /** Size of one page in design pixels. */
+  pageWidth: number
+  pageHeight: number
+  format: ExportFormat
+  scale?: number
+  quality?: number
+  /** Space between pages and around the sheet; default 6% of the page width. */
+  spacing?: number
+  background?: string
+}
+
+/** Page spacing that leaves enough room to cut or fold between pages. */
+export const pageSpacing = (pageWidth: number) => Math.round(pageWidth * 0.06)
+
+/**
+ * Exports every page as one tall image with `spacing` between pages and around the sheet.
+ * A single page is exported as is, without the surrounding space.
+ */
+export async function exportPagesToBlob(options: PagesExportOptions): Promise<Blob> {
+  const { elements, pageWidth, pageHeight, format, scale, quality } = options
+  const [only] = elements
+  if (!only) throw new Error('There is nothing to export.')
+  if (elements.length === 1) {
+    return exportElementToBlob({
+      element: only,
+      width: pageWidth,
+      height: pageHeight,
+      format,
+      scale,
+      quality,
+    })
+  }
+
+  const spacing = options.spacing ?? pageSpacing(pageWidth)
+  const width = pageWidth + spacing * 2
+  const height = elements.length * pageHeight + (elements.length - 1) * spacing + spacing * 2
+
+  const sheet = document.createElement('div')
+  sheet.style.cssText = [
+    'display:flex',
+    'flex-direction:column',
+    'box-sizing:border-box',
+    `gap:${spacing}px`,
+    `padding:${spacing}px`,
+    `background:${options.background ?? '#E5E7EB'}`,
+  ].join(';')
+  for (const element of elements) {
+    const page = element.cloneNode(true) as HTMLElement
+    page.style.flex = 'none'
+    sheet.append(page)
+  }
+
+  return exportElementToBlob({ element: sheet, width, height, format, scale, quality })
+}

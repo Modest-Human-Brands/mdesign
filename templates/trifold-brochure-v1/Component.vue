@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import IconFacebook from '~icons/simple-icons/facebook'
+import IconInstagram from '~icons/simple-icons/instagram'
+import IconLinkedin from '~icons/simple-icons/linkedin'
+import IconYoutube from '~icons/simple-icons/youtube'
 import { computed } from 'vue'
+
+import type { SocialKey } from '@/domain/organization'
 
 import Decor from './Decor.vue'
 import Lockup from './Lockup.vue'
 
 const props = defineProps<{
-  side: 'outside' | 'inside'
+  /** Zero-based page: 0 outside, 1 inside. */
+  page: number
   organizationName: string
   organizationLogo: string
   organizationFont: string
@@ -14,7 +21,7 @@ const props = defineProps<{
   organizationPhone: string
   organizationEmail: string
   organizationAddress: string
-  socialInitials: string[]
+  socials: { key: SocialKey; label: string; handle: string }[]
   leafImageUrl: string
   coverEyebrow: string
   coverTitle: string
@@ -38,6 +45,13 @@ const SHEET_WIDTH = 2480
 const SHEET_HEIGHT = 1748
 const k = SHEET_WIDTH / FRAME_WIDTH
 const frameHeight = SHEET_HEIGHT / k
+
+const SOCIAL_ICONS = {
+  instagram: IconInstagram,
+  facebook: IconFacebook,
+  linkedin: IconLinkedin,
+  youtube: IconYoutube,
+}
 
 const MUTED = '#3D3D3D'
 const NEUTRAL = '#D9D9D9'
@@ -81,7 +95,7 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
         backgroundColor: '#FFFFFF',
       }"
     >
-      <template v-if="side === 'outside'">
+      <template v-if="page === 0">
         <!-- Flap -->
         <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
           <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
@@ -95,11 +109,16 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
 
         <!-- Contact -->
         <div :style="panel({ paddingTop: '40px', backgroundColor: tint })">
-          <Lockup :name="organizationName" :logo="organizationLogo" :color="colorPrimary" />
+          <Lockup
+            :name="organizationName"
+            :logo="organizationLogo"
+            :color="colorPrimary"
+            :accent="colorAccent"
+          />
 
           <div
             :style="{
-              marginTop: '22px',
+              marginTop: '16px',
               padding: '16px',
               backgroundColor: '#FFFFFF',
               borderRadius: '24px 8px 26px 12px',
@@ -132,7 +151,7 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
             </div>
           </div>
 
-          <div :style="{ marginTop: '22px' }">
+          <div :style="{ marginTop: '16px' }">
             <div :style="{ fontSize: '20px', lineHeight: 1.25, color: colorPrimary }">
               {{ ctaLabel }}
             </div>
@@ -156,7 +175,7 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
             </div>
           </div>
 
-          <div v-if="socialInitials.length > 0" :style="{ marginTop: '22px' }">
+          <div v-if="socials.length > 0" :style="{ marginTop: '16px' }">
             <div
               v-if="ctaSocialLabel"
               :style="{
@@ -169,25 +188,43 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
             >
               {{ ctaSocialLabel }}
             </div>
-            <div style="display: flex; flex-direction: row">
+            <div
+              v-for="social in socials"
+              :key="social.key"
+              :style="{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: '8px',
+              }"
+            >
               <div
-                v-for="(initial, index) in socialInitials"
-                :key="index"
                 :style="{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '14px',
+                  flexShrink: 0,
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '11px',
                   backgroundColor: colorPrimary,
-                  marginRight: '10px',
+                  marginRight: '8px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '12px',
-                  lineHeight: 1,
                   color: '#FFFFFF',
                 }"
               >
-                {{ initial }}
+                <component :is="SOCIAL_ICONS[social.key]" style="width: 11px; height: 11px" />
+              </div>
+              <div
+                :style="{
+                  flex: 1,
+                  minWidth: 0,
+                  fontSize: '12px',
+                  lineHeight: 1.25,
+                  color: colorPrimary,
+                  overflowWrap: 'anywhere',
+                }"
+              >
+                {{ social.handle }}
               </div>
             </div>
           </div>
@@ -205,7 +242,12 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
           "
         >
           <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
-          <Lockup :name="organizationName" :logo="organizationLogo" :color="colorPrimary" />
+          <Lockup
+            :name="organizationName"
+            :logo="organizationLogo"
+            :color="colorPrimary"
+            :accent="colorAccent"
+          />
 
           <div style="position: relative">
             <div
