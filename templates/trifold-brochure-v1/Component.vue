@@ -1,147 +1,342 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+
+import Decor from './Decor.vue'
+import Lockup from './Lockup.vue'
+
+const props = defineProps<{
+  side: 'outside' | 'inside'
   organizationName: string
-  organizationInitial: string
   organizationLogo: string
   organizationFont: string
   colorPrimary: string
   colorAccent: string
-  onPrimary: string
-  gradient: string
   organizationPhone: string
   organizationEmail: string
-  organizationWebsite: string
   organizationAddress: string
+  socialInitials: string[]
+  leafImageUrl: string
   coverEyebrow: string
   coverTitle: string
   coverDescription: string
   flap: { heading: string; text: string }
   insideLeft: { heading: string; text: string }
+  insideRight: { heading: string; text: string }
   servicesHeading: string
   serviceItems: string[]
-  decorImage: string
+  serviceImageUrl: string
+  serviceImageCaption: string
   ctaLabel: string
   ctaPhone: string
   ctaNote: string
+  ctaSocialLabel: string
 }>()
+
+// The design is laid out on the original 735 x 520 frame and scaled uniformly to the 2480 px wide sheet
+const FRAME_WIDTH = 735
+const SHEET_WIDTH = 2480
+const SHEET_HEIGHT = 1748
+const k = SHEET_WIDTH / FRAME_WIDTH
+const frameHeight = SHEET_HEIGHT / k
+
+const MUTED = '#3D3D3D'
+const NEUTRAL = '#D9D9D9'
+const tint = computed(() => `${props.colorAccent}33`)
+
+// Unbroken strings (emails) cannot wrap, so shrink them to stay inside the contact card
+const contactSize = (value: string) => (value.length > 26 ? 9.5 : value.length > 22 ? 10.5 : 12)
+
+const panel = (extra: Record<string, string | number>) => ({
+  width: '33.3333%',
+  height: '100%',
+  overflow: 'hidden',
+  position: 'relative' as const,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  paddingLeft: '26px',
+  paddingRight: '26px',
+  ...extra,
+})
+
+const heading = { fontSize: '24px', lineHeight: 1.25 }
+const body = { fontSize: '12px', lineHeight: 1.5 }
 </script>
 
 <template>
-  <!-- Designed on a 1240 x 874 grid and scaled 2x to 2480 x 1748 -->
   <div
-    class="leading-normal relative size-full overflow-hidden bg-white text-[#0f172a]"
-    :style="{ fontFamily: organizationFont }"
+    class="relative size-full overflow-hidden bg-white"
+    :style="{ fontFamily: organizationFont, color: '#191919' }"
   >
     <div
-      class="absolute top-0 left-0 flex origin-top-left scale-[2]"
-      style="width: 1240px; height: 874px"
+      :style="{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        width: `${FRAME_WIDTH}px`,
+        height: `${frameHeight}px`,
+        transform: `scale(${k})`,
+        transformOrigin: 'top left',
+        backgroundColor: '#FFFFFF',
+      }"
     >
-      <!-- Panel 1: flap -->
-      <section class="relative h-full w-1/3 overflow-hidden" :style="{ background: gradient }">
-        <div
-          class="absolute top-[60px] right-[30px] bottom-[60px] left-[30px] rounded-[20px] bg-white p-7 shadow-[0_12px_30px_rgba(0,0,0,0.22)]"
-        >
-          <h2 class="text-[26px] leading-[34px] font-bold" :style="{ color: colorPrimary }">
+      <template v-if="side === 'outside'">
+        <!-- Flap -->
+        <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
+          <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
+          <div :style="{ ...heading, position: 'relative', color: colorPrimary }">
             {{ flap.heading }}
-          </h2>
-          <p class="mt-7 line-clamp-[11] text-[14px] leading-[23px] text-[#334155]">
+          </div>
+          <div :style="{ ...body, position: 'relative', color: colorPrimary, marginTop: '8px' }">
             {{ flap.text }}
-          </p>
-          <div class="absolute right-7 bottom-7 left-7">
-            <div class="mb-5 h-1 w-10 rounded-full" :style="{ backgroundColor: colorAccent }" />
-            <h3 class="text-[20px] font-bold" :style="{ color: colorPrimary }">
-              {{ servicesHeading }}
-            </h3>
-            <ul class="mt-4 flex flex-col gap-[18px]">
-              <li
-                v-for="(item, index) in serviceItems"
-                :key="index"
-                class="flex items-center gap-3 text-[16px] text-[#1e293b]"
-              >
-                <span
-                  class="size-2.5 shrink-0 rounded-full"
-                  :style="{ backgroundColor: colorAccent }"
-                />
-                <span class="truncate">{{ item }}</span>
-              </li>
-            </ul>
           </div>
         </div>
-      </section>
 
-      <!-- Panel 2: inside -->
-      <section class="relative h-full w-1/3 bg-[#f8fafc]">
-        <div
-          class="absolute top-[60px] right-[30px] left-[30px] h-[210px] rounded-[20px] bg-white p-7 shadow-[0_8px_20px_rgba(15,23,42,0.10)]"
-        >
-          <div class="flex items-center gap-5">
-            <img
-              v-if="organizationLogo"
-              :src="organizationLogo"
-              alt=""
-              class="size-14 object-contain"
-            />
-            <span
-              v-else
-              class="flex size-14 items-center justify-center rounded-full text-[26px] font-bold"
-              :style="{ backgroundColor: colorPrimary, color: onPrimary }"
-            >
-              {{ organizationInitial }}
-            </span>
-            <span class="truncate text-[20px] font-bold" :style="{ color: colorPrimary }">{{
-              organizationName
-            }}</span>
-          </div>
-          <p class="mt-6 truncate text-[13px] text-[#64748b]">{{ organizationEmail }}</p>
-          <p class="mt-1.5 truncate text-[13px] text-[#64748b]">
-            {{ [organizationPhone, organizationWebsite].filter(Boolean).join('  ·  ') }}
-          </p>
-          <p class="mt-1.5 line-clamp-2 text-[13px] leading-[19px] text-[#64748b]">
-            {{ organizationAddress }}
-          </p>
-        </div>
-        <div class="absolute top-[320px] right-[30px] left-[30px]">
-          <div class="mb-6 h-1 w-10 rounded-full" :style="{ backgroundColor: colorAccent }" />
-          <h2 class="text-[28px] leading-9 font-bold" :style="{ color: colorPrimary }">
-            {{ insideLeft.heading }}
-          </h2>
-          <p class="mt-6 line-clamp-[14] text-[15px] leading-[25px] text-[#475569]">
-            {{ insideLeft.text }}
-          </p>
-        </div>
-      </section>
+        <!-- Contact -->
+        <div :style="panel({ paddingTop: '40px', backgroundColor: tint })">
+          <Lockup :name="organizationName" :logo="organizationLogo" :color="colorPrimary" />
 
-      <!-- Panel 3: cover -->
-      <section
-        class="relative h-full w-1/3 overflow-hidden text-white"
-        :style="{ background: gradient }"
-      >
-        <div class="absolute inset-0 bg-[#0f172a]/35" />
-        <img
-          v-if="decorImage"
-          :src="decorImage"
-          alt=""
-          class="absolute -right-[50px] -bottom-[40px] size-[300px] object-contain opacity-35"
-        />
-        <div class="absolute top-[240px] right-10 left-10">
-          <p class="text-[14px] font-bold tracking-[4px] text-[#e2e8f0] uppercase">
-            {{ coverEyebrow }}
-          </p>
-          <h1 class="mt-3 line-clamp-4 text-[52px] leading-[60px] font-bold">{{ coverTitle }}</h1>
-          <p class="mt-10 line-clamp-4 text-[18px] leading-7 text-[#e2e8f0]">
-            {{ coverDescription }}
-          </p>
-        </div>
-        <div class="absolute right-10 bottom-[52px] left-10">
-          <span
-            class="flex h-[52px] w-[230px] items-center justify-center rounded-full bg-white text-[17px] font-bold"
-            :style="{ color: colorPrimary }"
-            >{{ ctaLabel }}</span
+          <div
+            :style="{
+              marginTop: '22px',
+              padding: '16px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '24px 8px 26px 12px',
+            }"
           >
-          <p class="mt-3 text-[16px] font-bold">{{ ctaPhone }}</p>
-          <p class="mt-0.5 text-[12px] text-[#cbd5e1]">{{ ctaNote }}</p>
+            <div
+              v-if="organizationPhone"
+              :style="{
+                ...body,
+                fontSize: `${contactSize(organizationPhone)}px`,
+                color: colorPrimary,
+                marginBottom: '8px',
+              }"
+            >
+              {{ organizationPhone }}
+            </div>
+            <div
+              v-if="organizationEmail"
+              :style="{
+                ...body,
+                fontSize: `${contactSize(organizationEmail)}px`,
+                color: colorPrimary,
+                marginBottom: '8px',
+              }"
+            >
+              {{ organizationEmail }}
+            </div>
+            <div v-if="organizationAddress" :style="{ ...body, color: colorPrimary }">
+              {{ organizationAddress }}
+            </div>
+          </div>
+
+          <div :style="{ marginTop: '22px' }">
+            <div :style="{ fontSize: '20px', lineHeight: 1.25, color: colorPrimary }">
+              {{ ctaLabel }}
+            </div>
+            <div
+              v-if="ctaPhone"
+              :style="{
+                fontSize: '24px',
+                lineHeight: 1.25,
+                fontWeight: 700,
+                color: colorPrimary,
+                marginTop: '4px',
+              }"
+            >
+              {{ ctaPhone }}
+            </div>
+            <div
+              v-if="ctaNote"
+              :style="{ fontSize: '10px', lineHeight: 1.2, color: MUTED, marginTop: '4px' }"
+            >
+              {{ ctaNote }}
+            </div>
+          </div>
+
+          <div v-if="socialInitials.length > 0" :style="{ marginTop: '22px' }">
+            <div
+              v-if="ctaSocialLabel"
+              :style="{
+                fontSize: '12px',
+                lineHeight: 1.5,
+                fontWeight: 700,
+                color: colorPrimary,
+                marginBottom: '10px',
+              }"
+            >
+              {{ ctaSocialLabel }}
+            </div>
+            <div style="display: flex; flex-direction: row">
+              <div
+                v-for="(initial, index) in socialInitials"
+                :key="index"
+                :style="{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '14px',
+                  backgroundColor: colorPrimary,
+                  marginRight: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  lineHeight: 1,
+                  color: '#FFFFFF',
+                }"
+              >
+                {{ initial }}
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+
+        <!-- Cover -->
+        <div
+          :style="
+            panel({
+              paddingTop: '96px',
+              paddingBottom: '132px',
+              justifyContent: 'space-between',
+              backgroundColor: '#FFFFFF',
+            })
+          "
+        >
+          <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
+          <Lockup :name="organizationName" :logo="organizationLogo" :color="colorPrimary" />
+
+          <div style="position: relative">
+            <div
+              v-if="coverEyebrow"
+              :style="{
+                fontSize: '10px',
+                lineHeight: 1.2,
+                fontWeight: 700,
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+                color: MUTED,
+                marginBottom: '8px',
+              }"
+            >
+              {{ coverEyebrow }}
+            </div>
+            <div
+              :style="{
+                fontSize: '32px',
+                lineHeight: 1.25,
+                fontWeight: 700,
+                letterSpacing: '-0.64px',
+                color: colorPrimary,
+              }"
+            >
+              {{ coverTitle }}
+            </div>
+            <div v-if="coverDescription" :style="{ ...body, color: MUTED, marginTop: '8px' }">
+              {{ coverDescription }}
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <template v-else>
+        <!-- Inside left -->
+        <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
+          <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
+          <div :style="{ ...heading, position: 'relative', color: colorPrimary }">
+            {{ insideLeft.heading }}
+          </div>
+          <div :style="{ ...body, position: 'relative', color: colorPrimary, marginTop: '8px' }">
+            {{ insideLeft.text }}
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div :style="panel({ paddingTop: '52px', backgroundColor: '#FFFFFF' })">
+          <div
+            :style="{
+              position: 'absolute',
+              left: '21px',
+              top: '26.2px',
+              width: '203px',
+              height: '1px',
+              backgroundColor: NEUTRAL,
+            }"
+          />
+          <div
+            :style="{
+              position: 'absolute',
+              left: '21px',
+              top: '493.1px',
+              width: '203px',
+              height: '1px',
+              backgroundColor: NEUTRAL,
+            }"
+          />
+
+          <div :style="{ fontSize: '20px', lineHeight: 1.25, color: colorPrimary }">
+            {{ servicesHeading }}
+          </div>
+          <div
+            v-for="(item, index) in serviceItems"
+            :key="index"
+            :style="{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: '10px',
+            }"
+          >
+            <div
+              :style="{
+                flexShrink: 0,
+                width: '6px',
+                height: '6px',
+                borderRadius: '3px',
+                backgroundColor: colorAccent,
+                marginRight: '8px',
+              }"
+            />
+            <div :style="{ ...body, flex: 1, color: colorPrimary }">{{ item }}</div>
+          </div>
+
+          <div :style="{ marginTop: '20px' }">
+            <div
+              :style="{
+                height: '105px',
+                backgroundColor: tint,
+                overflow: 'hidden',
+                borderRadius: '52px 16px 40px 16px',
+              }"
+            >
+              <img
+                v-if="serviceImageUrl"
+                :src="serviceImageUrl"
+                alt=""
+                style="display: block; width: 100%; height: 105px; object-fit: cover"
+              />
+            </div>
+            <div
+              v-if="serviceImageCaption"
+              :style="{ fontSize: '10px', lineHeight: 1.2, color: MUTED, marginTop: '8px' }"
+            >
+              {{ serviceImageCaption }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Inside right -->
+        <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
+          <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
+          <div :style="{ ...heading, position: 'relative', color: colorPrimary }">
+            {{ insideRight.heading }}
+          </div>
+          <div :style="{ ...body, position: 'relative', color: colorPrimary, marginTop: '8px' }">
+            {{ insideRight.text }}
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
