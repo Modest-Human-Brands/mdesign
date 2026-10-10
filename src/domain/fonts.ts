@@ -1,6 +1,5 @@
 import type { FontSummary } from './types'
 
-/** Curated Google Fonts families offered in the brand picker (loaded on demand). */
 export const FONT_CATALOGUE: string[] = [
   'Exo 2',
   'Inter',
@@ -10,6 +9,9 @@ export const FONT_CATALOGUE: string[] = [
   'Montserrat',
   'Open Sans',
   'Oxanium',
+  'Rajdhani',
+  'Teko',
+  'Dosis',
   'Playfair Display',
   'Merriweather',
   'Raleway',
@@ -34,7 +36,7 @@ export const FONT_CATALOGUE: string[] = [
   'Josefin Sans',
 ]
 
-export const toFontSummary = (family: string): FontSummary => ({
+const toFontSummary = (family: string): FontSummary => ({
   family,
   name: family.replaceAll(/\s+/g, ''),
 })
@@ -61,10 +63,6 @@ async function toDataUrl(url: string): Promise<string> {
   })
 }
 
-/**
- * Loads a Google Fonts family (regular and bold) as an inline `<style>` whose @font-face sources are data URIs,
- * so the font renders on the page and can be embedded into image exports. Resolves false when offline or unknown.
- */
 export function loadGoogleFont(family: string): Promise<boolean> {
   const name = family.trim()
   if (name === '') return Promise.resolve(false)

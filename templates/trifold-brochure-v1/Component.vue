@@ -11,7 +11,6 @@ import Decor from './Decor.vue'
 import Lockup from './Lockup.vue'
 
 const props = defineProps<{
-  /** Zero-based page: 0 outside, 1 inside. */
   page: number
   organizationName: string
   organizationLogo: string
@@ -39,7 +38,6 @@ const props = defineProps<{
   ctaSocialLabel: string
 }>()
 
-// The design is laid out on the original 735 x 520 frame and scaled uniformly to the 2480 px wide sheet
 const FRAME_WIDTH = 735
 const SHEET_WIDTH = 2480
 const SHEET_HEIGHT = 1748
@@ -57,7 +55,6 @@ const MUTED = '#3D3D3D'
 const NEUTRAL = '#D9D9D9'
 const tint = computed(() => `${props.colorAccent}33`)
 
-// Unbroken strings (emails) cannot wrap, so shrink them to stay inside the contact card
 const contactSize = (value: string) => (value.length > 26 ? 9.5 : value.length > 22 ? 10.5 : 12)
 
 const panel = (extra: Record<string, string | number>) => ({
@@ -96,7 +93,6 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
       }"
     >
       <template v-if="page === 0">
-        <!-- Flap -->
         <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
           <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
           <div :style="{ ...heading, position: 'relative', color: colorPrimary }">
@@ -107,7 +103,6 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
           </div>
         </div>
 
-        <!-- Contact -->
         <div :style="panel({ paddingTop: '40px', backgroundColor: tint })">
           <Lockup
             :name="organizationName"
@@ -230,7 +225,6 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
           </div>
         </div>
 
-        <!-- Cover -->
         <div
           :style="
             panel({
@@ -283,7 +277,6 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
       </template>
 
       <template v-else>
-        <!-- Inside left -->
         <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
           <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
           <div :style="{ ...heading, position: 'relative', color: colorPrimary }">
@@ -294,7 +287,6 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
           </div>
         </div>
 
-        <!-- Services -->
         <div :style="panel({ paddingTop: '52px', backgroundColor: '#FFFFFF' })">
           <div
             :style="{
@@ -368,7 +360,6 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
           </div>
         </div>
 
-        <!-- Inside right -->
         <div :style="panel({ paddingTop: '96px', backgroundColor: '#FFFFFF' })">
           <Decor :accent="colorAccent" :leaf-image-url="leafImageUrl" />
           <div :style="{ ...heading, position: 'relative', color: colorPrimary }">

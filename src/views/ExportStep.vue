@@ -35,7 +35,6 @@ const template = computed(() => wizard.template)
 const label = computed(() => template.value?.label ?? 'Design')
 const defaultName = computed(() => `${template.value?.id ?? 'design'}`)
 
-// 1x is the design size. Designs authored below 300 DPI get a print option that reaches 300 DPI.
 const designDpi = computed(() => template.value?.resolution.dpi ?? 72)
 const SCALES = computed(() => {
   const options = [

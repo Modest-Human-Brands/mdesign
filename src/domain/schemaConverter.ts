@@ -29,10 +29,6 @@ function columnSpan(key: string, node: JsonSchema): number {
   return 1
 }
 
-/**
- * Converts a template's Zod schema to the JSON Schema dialect the form engine renders:
- * adds titles, `x-section` for top-level groups, and `x-order` / `x-column` layout hints.
- */
 export function parseSchemaToJsonSchema(
   schema: z.ZodType,
   placeholders: Record<string, unknown> = {},
@@ -59,8 +55,6 @@ export function parseSchemaToJsonSchema(
       return { ...node, items: enrich(node.items, depth + 1, first) }
     }
 
-    // Only values that must start filled become form defaults: enums, numbers, booleans and image / decor pickers.
-    // Text starts empty and previews as a {{Field Label}} token until the user fills it.
     const defaultable =
       node.enum || node.type === 'number' || node.type === 'boolean' || node['x-widget']
     if (

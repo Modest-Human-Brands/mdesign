@@ -3,7 +3,6 @@ import leafSvg from '@/assets/decor/leaf.svg?raw'
 export interface BuiltinDecor {
   id: string
   label: string
-  /** Single-colour line art that can be recoloured with the brand colours. */
   tintable: boolean
   svg: string
   slots: string[]
@@ -26,10 +25,6 @@ export function decorKind(value: string): DecorKind {
 export const svgDataUrl = (svg: string) =>
   `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
 
-/**
- * Resolves a decor reference (`builtin:<id>`, a data URI or an https URL) to something usable as `<img src>`.
- * Builtin line art is recoloured with `tint`. Returns '' for none/unknown.
- */
 export function resolveDecor(value: string | undefined, tint?: string): string {
   const text = (value ?? '').trim()
   switch (decorKind(text)) {
@@ -47,19 +42,6 @@ export function resolveDecor(value: string | undefined, tint?: string): string {
       return text
     default:
       return ''
-  }
-}
-
-export function describeDecor(value: string): string {
-  switch (decorKind(value)) {
-    case 'none':
-      return ''
-    case 'builtin':
-      return value.trim().slice('builtin:'.length)
-    case 'data':
-      return 'Uploaded image'
-    default:
-      return value.trim()
   }
 }
 

@@ -8,7 +8,6 @@ import {
   labelFromPath,
   orderedProperties,
   singularLabel,
-  stripExcluded,
   type Problem,
 } from './schema'
 import { checkLeaf } from './validate'
@@ -98,12 +97,12 @@ function fieldSchema(node: JsonSchema, required: boolean, label: string): z.ZodT
 }
 
 export function buildFormSchema(schema: JsonSchema): FormSchema {
-  return z.object(shapeOf(stripExcluded(schema)))
+  return z.object(shapeOf(schema))
 }
 
 export const emptyFormSchema: FormSchema = z.object({})
 
-export function problemsFromIssues(issues: readonly z.core.$ZodIssue[]): Problem[] {
+function problemsFromIssues(issues: readonly z.core.$ZodIssue[]): Problem[] {
   return issues.map((issue) => {
     const params = (issue as { params?: Partial<IssueParams> }).params
     const kind: Kind = params?.kind ?? 'invalid'

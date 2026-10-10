@@ -25,7 +25,6 @@ defineProps<{
     class="leading-normal relative size-full overflow-hidden bg-[#f8fafc] text-[#0f172a]"
     :style="{ fontFamily: organizationFont }"
   >
-    <!-- Hero -->
     <header class="absolute inset-x-0 top-0 h-[900px] text-white" :style="{ background: gradient }">
       <div class="absolute inset-0 bg-[#0f172a]/30" />
       <div class="absolute top-16 right-16 left-16 flex items-center gap-5">
@@ -46,7 +45,6 @@ defineProps<{
       </div>
     </header>
 
-    <!-- Schedule card -->
     <section
       class="absolute top-[860px] right-12 left-12 rounded-[28px] bg-white p-10 shadow-[0_16px_40px_rgba(15,23,42,0.25)]"
     >
@@ -59,7 +57,6 @@ defineProps<{
       <p class="truncate text-[30px] text-[#334155]">{{ venue }}</p>
     </section>
 
-    <!-- Highlights -->
     <section class="absolute top-[1210px] right-16 left-16">
       <h2 class="text-[40px] font-bold" :style="{ color: colorPrimary }">What to expect</h2>
       <ol class="mt-8 flex flex-col gap-11">
@@ -74,7 +71,6 @@ defineProps<{
       </ol>
     </section>
 
-    <!-- Call to action -->
     <footer class="absolute right-12 bottom-[100px] left-12 text-center">
       <span
         class="flex h-[120px] items-center justify-center rounded-full text-[44px] font-bold"

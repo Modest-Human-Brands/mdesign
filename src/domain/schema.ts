@@ -1,7 +1,5 @@
 import type { JsonSchema } from '@/domain/types'
 
-export const EXCLUDED_ROOT_KEYS: readonly string[] = ['organization']
-
 export type Values = Record<string, unknown>
 
 export function isObjectSchema(schema: JsonSchema): boolean {
@@ -33,21 +31,6 @@ export function getPath(data: unknown, path: (string | number)[]): unknown {
     current = (current as Record<string | number, unknown>)[segment]
   }
   return current
-}
-
-export function textAt(data: unknown, path: (string | number)[]): string {
-  const value = getPath(data, path)
-  return typeof value === 'string' || typeof value === 'number' ? String(value) : ''
-}
-
-export function setPath(data: unknown, path: (string | number)[], value: unknown): unknown {
-  const [head, ...rest] = path
-  if (head === undefined) return value
-  const isIndex = typeof head === 'number'
-  const base: unknown = isIndex ? (Array.isArray(data) ? [...data] : []) : { ...(data as object) }
-  const container = base as Record<string | number, unknown>
-  container[head] = setPath(container[head], rest, value)
-  return base
 }
 
 export function emptyValue(schema: JsonSchema): unknown {
@@ -108,18 +91,6 @@ export function toPayload(schema: JsonSchema, value: unknown): unknown {
   return value ?? undefined
 }
 
-export function autoPaths(schema: JsonSchema, prefix: string[] = []): string[][] {
-  if (isObjectSchema(schema)) {
-    return orderedProperties(schema).flatMap(([key, child]) => autoPaths(child, [...prefix, key]))
-  }
-  return schema['x-auto'] && schema.type !== 'array' ? [prefix] : []
-}
-
-export function ownNumberPath(schema: JsonSchema): string[] | null {
-  const paths = autoPaths(schema)
-  return paths.find((p) => p[p.length - 1] === 'invoiceNumber') ?? paths[0] ?? null
-}
-
 export function schemaDefaults(
   schema: JsonSchema,
   overrides: Record<string, string> = {},
@@ -146,18 +117,6 @@ export function schemaDefaults(
 export function singularLabel(title: string): string {
   const text = title.replace(/ies$/i, 'y').replace(/s$/i, '')
   return text.charAt(0).toUpperCase() + text.slice(1)
-}
-
-export function stripExcluded(schema: JsonSchema): JsonSchema {
-  if (!schema.properties) return schema
-  const properties = Object.fromEntries(
-    Object.entries(schema.properties).filter(([key]) => !EXCLUDED_ROOT_KEYS.includes(key)),
-  )
-  return {
-    ...schema,
-    properties,
-    required: schema.required?.filter((key) => !EXCLUDED_ROOT_KEYS.includes(key)),
-  }
 }
 
 export interface Problem {

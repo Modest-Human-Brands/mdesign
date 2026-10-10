@@ -1,5 +1,5 @@
 <script setup lang="ts">
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost'
 
 withDefaults(
   defineProps<{

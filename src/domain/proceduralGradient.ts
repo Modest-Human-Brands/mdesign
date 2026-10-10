@@ -1,5 +1,4 @@
-// Auto-branded mesh gradient: balanced radial "spots" derived from the primary and accent colours with HSL harmonics.
-export interface GradientSpot {
+interface GradientSpot {
   x: number
   y: number
   r: number
@@ -9,11 +8,9 @@ export interface GradientSpot {
 export interface ProceduralGradientResult {
   baseColor: string
   spots: GradientSpot[]
-  /** Value for the CSS `background` property. */
   cssStyle: string
 }
 
-/** '#abc' / 'abc' / '#aabbcc' -> '#aabbcc'; anything else becomes `fallback`. */
 export function normalizeHex(value: string | undefined, fallback = '#111827'): string {
   const hex = (value ?? '').trim().replace('#', '')
   if (/^[\da-f]{3}$/i.test(hex)) {
@@ -62,7 +59,6 @@ export function hslToHex(h: number, s: number, l: number): string {
   return `#${channel(0)}${channel(8)}${channel(4)}`
 }
 
-/** Black or white, whichever reads better on `background`. */
 export function onColor(background: string): string {
   const num = Number.parseInt(normalizeHex(background).slice(1), 16)
   const luminance = (0.299 * (num >> 16) + 0.587 * ((num >> 8) & 0xff) + 0.114 * (num & 0xff)) / 255
@@ -89,7 +85,6 @@ export function generateProceduralGradient(
     { x: 0.85, y: 0.85, r: 0.6, color: tertiarySpot },
   ]
 
-  // Each layer fades to the same colour at 0 alpha so no grey fringe appears between layers
   const layers = spots.map(
     (spot) =>
       `radial-gradient(circle at ${spot.x * 100}% ${spot.y * 100}%, ${spot.color} 0%, ${spot.color}00 ${spot.r * 100}%)`,

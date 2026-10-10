@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-// Decorative blobs and leaf shared by the brochure panels. Geometry is in Figma units (735 x 520 frame).
 const props = defineProps<{ accent: string; leafImageUrl: string }>()
 
 const NEUTRAL = '#D9D9D9'
@@ -26,7 +25,6 @@ const shapes: Shape[] = [
 ]
 
 function shapeStyle(shape: Shape) {
-  // Mimic CSS corner-radius clamping so overlapping radii never distort the shape
   const [tl, tr, br, bl] = shape.r
   const f = Math.min(
     1,

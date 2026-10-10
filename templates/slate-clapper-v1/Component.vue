@@ -27,7 +27,6 @@ const label = 'text-[20px] tracking-[3px] text-[#94a3b8] uppercase'
     class="leading-normal relative size-full overflow-hidden bg-[#1f2937] text-[#f8fafc]"
     :style="{ fontFamily: organizationFont }"
   >
-    <!-- Clapper arm -->
     <div
       class="absolute top-[90px] right-[120px] left-[120px] flex h-[90px] gap-0 overflow-hidden border-[6px] border-[#f8fafc] bg-[#0B0F19]"
     >
@@ -39,7 +38,6 @@ const label = 'text-[20px] tracking-[3px] text-[#94a3b8] uppercase'
       />
     </div>
 
-    <!-- Board -->
     <div
       class="absolute top-[190px] right-[120px] bottom-[110px] left-[120px] rounded-b-[18px] border-[6px] border-[#f8fafc] bg-[#0B0F19] shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
     >

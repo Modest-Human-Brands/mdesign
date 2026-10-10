@@ -5,6 +5,7 @@ import { computed } from 'vue'
 import type { JsonSchema } from '@/domain/types'
 import DecorPicker from '@/components/wizard/DecorPicker.vue'
 import UiAddButton from '@/components/ui/UiAddButton.vue'
+import UiPositionPicker from '@/components/ui/UiPositionPicker.vue'
 import UiSegmentedControl from '@/components/ui/UiSegmentedControl.vue'
 import UiSelect from '@/components/ui/UiSelect.vue'
 import UiTextField from '@/components/ui/UiTextField.vue'
@@ -133,7 +134,7 @@ function noun(schema: JsonSchema, key: string): string {
         <template v-for="[key, child] in block.entries" :key="key">
           <NotField v-slot="{ errors, events }" :path="dotted([...base, key])">
             <DecorPicker
-              v-if="child['x-widget']"
+              v-if="child['x-widget'] === 'decor' || child['x-widget'] === 'image'"
               :model-value="text([...base, key])"
               :label="label(key, child)"
               :widget="child['x-widget']"
@@ -143,7 +144,23 @@ function noun(schema: JsonSchema, key: string): string {
               :class="'col-span-2'"
               @update:model-value="(v) => set([...base, key], v)"
             />
+            <UiPositionPicker
+              :error="messageFor(errors, [...base, key])"
+              v-else-if="child['x-widget'] === 'position' && child.enum && child['x-positions']"
+              :model-value="text([...base, key])"
+              :label="label(key, child)"
+              :values="child.enum.map(String)"
+              :positions="child['x-positions']"
+              :class="colSpan(child)"
+              @update:model-value="
+                (v) => {
+                  set([...base, key], v)
+                  events.onChange()
+                }
+              "
+            />
             <UiSelect
+              :error="messageFor(errors, [...base, key])"
               v-else-if="child.enum && child.enum.length > 3"
               :model-value="text([...base, key])"
               :label="label(key, child)"
@@ -157,6 +174,7 @@ function noun(schema: JsonSchema, key: string): string {
               "
             />
             <UiSegmentedControl
+              :error="messageFor(errors, [...base, key])"
               v-else-if="child.enum"
               :model-value="text([...base, key])"
               :label="label(key, child)"
@@ -170,6 +188,7 @@ function noun(schema: JsonSchema, key: string): string {
               "
             />
             <UiSegmentedControl
+              :error="messageFor(errors, [...base, key])"
               v-else-if="child.type === 'boolean'"
               :model-value="String(valueAt([...base, key]) === true)"
               :label="label(key, child)"

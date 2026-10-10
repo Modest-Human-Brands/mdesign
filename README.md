@@ -33,6 +33,24 @@ MDesign is a static Vue 3 SPA (Vite, Pinia, Tailwind CSS v4, notform + Zod). The
 
 Export scale is `1x`, `2x` or `300 DPI` (4.17x of the design grid); SVG ignores scale.
 
+### Business card recipes
+
+`business-card-v1` is a two-page card (front, back). The Brand step supplies the logo, colours, font, business name and website; the Content step switches layout and artwork:
+
+| Setting                       | Dark gradient card (viewfinder QR back) | Plain card (artwork back)     |
+| :---------------------------- | :-------------------------------------- | :---------------------------- |
+| Design → Background           | gradient                                | plain                         |
+| Design → Emphasis / Name size | regular / large                         | bold / standard               |
+| Design → Content start        | edge                                    | inset (room for left art)     |
+| Design → Logo                 | top-right, small                        | middle-right, large           |
+| Design → Contacts             | bottom                                  | under-title                   |
+| Artwork → Front               | line art, placement cover, subtle       | pattern, placement left, full |
+| Artwork → Back                | (none)                                  | illustration, center-bottom   |
+| Back → Layout                 | qr (URL defaults to the website)        | artwork (shows the website)   |
+| Back → QR style / Frame       | rounded / viewfinder                    | (not used)                    |
+
+Upload the artwork (PNG, JPG, WebP or SVG) with the image pickers.
+
 ## Adding a template
 
 ```

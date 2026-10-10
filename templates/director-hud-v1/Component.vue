@@ -37,7 +37,6 @@ const corner = [
     <div class="absolute inset-0 bg-black/40" />
     <div class="absolute inset-x-0 bottom-0 h-[45%] bg-black/45" />
 
-    <!-- Viewfinder corners -->
     <span
       v-for="position in corner"
       :key="position"
@@ -45,7 +44,6 @@ const corner = [
       :class="position"
     />
 
-    <!-- Crosshair -->
     <span
       class="absolute top-1/2 left-1/2 h-[3px] w-[60px] -translate-x-1/2 -translate-y-1/2 bg-white/70"
     />
@@ -55,7 +53,6 @@ const corner = [
     <span class="absolute top-1/2 left-1/3 h-7 w-0.5 -translate-y-1/2 bg-white/35" />
     <span class="absolute top-1/2 left-2/3 h-7 w-0.5 -translate-y-1/2 bg-white/35" />
 
-    <!-- Top bar -->
     <div
       class="absolute top-[100px] right-[100px] left-[100px] flex items-center justify-between text-[28px] tracking-[3px]"
     >
@@ -65,7 +62,6 @@ const corner = [
       <span class="text-[26px] tracking-[2px]">{{ camera }} · {{ fps }} · {{ iso }}</span>
     </div>
 
-    <!-- Lower third -->
     <div
       class="absolute right-[100px] bottom-[230px] left-[100px] flex gap-7"
       :style="{ fontFamily: organizationFont }"
@@ -77,7 +73,6 @@ const corner = [
       </div>
     </div>
 
-    <!-- Info bar -->
     <div
       class="absolute right-[100px] bottom-[100px] left-[100px] flex items-center justify-between text-[26px] tracking-[2px]"
     >

@@ -99,7 +99,6 @@ export default {
           ? brand.colorAccent
           : undefined
 
-    // Icon + username inferred from each profile link; with no links yet every network shows its token
     const filled = socialEntries(org.socials)
     const socials =
       filled.length > 0

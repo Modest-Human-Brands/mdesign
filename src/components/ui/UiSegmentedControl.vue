@@ -6,6 +6,7 @@ const model = defineModel<T>({ required: true })
 defineProps<{
   label?: string
   options: { value: T; label: string }[]
+  error?: string
 }>()
 
 const id = useId()
@@ -17,7 +18,10 @@ const id = useId()
     <div
       role="radiogroup"
       :aria-labelledby="label ? id : undefined"
-      class="flex gap-0.5 rounded-md border border-dark-600 bg-dark-500 p-0.75"
+      :aria-invalid="error ? 'true' : undefined"
+      tabindex="-1"
+      class="flex gap-0.5 rounded-md border bg-dark-500 p-0.75 outline-none"
+      :class="error ? 'border-alert-500' : 'border-dark-600'"
     >
       <button
         v-for="option in options"
@@ -34,5 +38,6 @@ const id = useId()
         {{ option.label }}
       </button>
     </div>
+    <p v-if="error" class="text-xs text-alert-400" role="alert">{{ error }}</p>
   </div>
 </template>

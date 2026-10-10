@@ -27,7 +27,6 @@ const PADDING = 48
 const PAGE_GAP = 24
 const zoom = ref(100)
 
-// A single page fits entirely; several pages fit the width and scroll vertically like a PDF
 const fitScale = computed(() => {
   const availableWidth = Math.max(120, stageWidth.value - PADDING * 2)
   const availableHeight = Math.max(120, stageHeight.value - PADDING * 2)
@@ -49,7 +48,6 @@ function setCapture(element: Element | ComponentPublicInstance | null, index: nu
 }
 
 defineExpose({
-  /** The rendered pages at full design resolution, in order. */
   getCaptureElements: () =>
     captureElements
       .slice(0, pageCount.value)
@@ -58,7 +56,6 @@ defineExpose({
 
 const label = computed(() => props.label)
 
-/** Multi-page components get a zero-based `page` prop; single-page ones are left untouched. */
 const pageProps = (index: number) =>
   pageCount.value > 1 ? { ...wizard.renderedProps, page: index } : wizard.renderedProps
 </script>
@@ -97,7 +94,6 @@ const pageProps = (index: number) =>
               transform: `scale(${scale})`,
             }"
           >
-            <!-- The element below is what gets captured at full design resolution -->
             <div
               :ref="(element) => setCapture(element, index)"
               class="overflow-hidden bg-white"

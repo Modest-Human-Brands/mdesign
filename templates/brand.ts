@@ -21,7 +21,6 @@ export interface BrandProps {
 const stack = (family: string) =>
   `'${family.replaceAll("'", '')}', 'Exo 2 Variable', system-ui, sans-serif`
 
-/** Flattens the organisation profile into the brand props every template shares. */
 export function brandProps(org: OrganizationProfile): BrandProps {
   const realName = org.name.trim()
   const name = realName || token('Business Name')
@@ -56,5 +55,3 @@ export const list = (value: unknown, max: number): string[] =>
   (Array.isArray(value) ? value : [])
     .filter((item): item is string => typeof item === 'string' && item.trim() !== '')
     .slice(0, max)
-/** Re-exported so templates can tell a real value from a `{{Field Label}}` placeholder. */
-export { isToken, realText } from '@/domain/tokens'

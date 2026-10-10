@@ -4,7 +4,7 @@ import { ref, useTemplateRef } from 'vue'
 
 import { rasterizeLogo } from '@/domain/image'
 
-export interface LogoValue {
+interface LogoValue {
   name: string
   dataUrl: string
 }

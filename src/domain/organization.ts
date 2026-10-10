@@ -1,5 +1,5 @@
 export const ENTITY_TYPES = ['LLP', 'Private Limited', 'Proprietorship'] as const
-export type EntityType = (typeof ENTITY_TYPES)[number]
+type EntityType = (typeof ENTITY_TYPES)[number]
 
 export const TRADE_RELATIONSHIPS = [
   'Primary',
@@ -8,12 +8,12 @@ export const TRADE_RELATIONSHIPS = [
   'Wholly-Owned Subsidiary',
   'Special Purpose Vehicle',
 ] as const
-export type TradeRelationship = (typeof TRADE_RELATIONSHIPS)[number]
+type TradeRelationship = (typeof TRADE_RELATIONSHIPS)[number]
 
 export const SOCIAL_KEYS = ['instagram', 'facebook', 'linkedin', 'youtube'] as const
 export type SocialKey = (typeof SOCIAL_KEYS)[number]
 
-export const FIRST_FOUNDED_YEAR = 1900
+const FIRST_FOUNDED_YEAR = 1900
 
 export interface OrganizationProfile {
   id: string
@@ -39,10 +39,6 @@ export interface OrganizationProfile {
 }
 
 export const DEFAULT_FONT = 'Exo 2'
-
-export function fontName(family: string): string {
-  return family.replace(/\s+/g, '')
-}
 
 export function normalizeHex(input: string): string | null {
   const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(input.trim())
@@ -71,7 +67,7 @@ export function isEmail(input: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(input.trim())
 }
 
-export const DEFAULT_ORGANIZATION_ID = 'default'
+const DEFAULT_ORGANIZATION_ID = 'default'
 
 export function emptyOrganization(): OrganizationProfile {
   return {

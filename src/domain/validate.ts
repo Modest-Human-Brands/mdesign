@@ -6,7 +6,7 @@ function isBlank(value: unknown): boolean {
   return value === undefined || value === null || (typeof value === 'string' && value.trim() === '')
 }
 
-export function isRealDate(text: string): boolean {
+function isRealDate(text: string): boolean {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text)
   if (!match) return false
   const [, year, month, day] = match.map(Number) as [number, number, number, number]

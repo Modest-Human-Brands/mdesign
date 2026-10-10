@@ -4,7 +4,7 @@ const modules = import.meta.glob<{ default: DesignTemplateDefinition }>('./*/ind
   eager: true,
 })
 
-export const templateRegistry: Record<string, DesignTemplateDefinition> = {}
+const templateRegistry: Record<string, DesignTemplateDefinition> = {}
 
 for (const path of Object.keys(modules).sort()) {
   const template = modules[path]?.default

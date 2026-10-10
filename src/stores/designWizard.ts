@@ -14,14 +14,8 @@ import {
 import { organizationFormSchema } from '@/domain/organizationForm'
 import { parseSchemaToJsonSchema } from '@/domain/schemaConverter'
 import { tokensFor } from '@/domain/tokens'
-import {
-  emptyValue,
-  schemaDefaults,
-  toPayload,
-  withDefaults,
-  type Problem,
-  type Values,
-} from '@/domain/schema'
+import { initialValues } from '@/domain/templateValues'
+import { toPayload, type Problem, type Values } from '@/domain/schema'
 import type { JsonSchema } from '@/domain/types'
 import { getTemplate } from '@templates/registry'
 import type { DesignTemplateDefinition } from '@templates/types'
@@ -40,7 +34,6 @@ interface Draft {
   values: Values
 }
 
-/** `override` wins over `base`; empty strings and missing keys fall back to the sample copy. */
 function mergeOver(base: unknown, override: unknown): unknown {
   if (override === undefined || override === null || override === '') return base
   if (Array.isArray(override)) return override
@@ -81,7 +74,7 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
 
   const form = useNotForm({
     schema: () => formSchema.value,
-    initialValues: initialTemplate ? (saved?.values ?? {}) : {},
+    initialValues: initialTemplate ? initialValues(initialTemplate, saved?.values) : {},
   })
   const values = form.values as Values
 
@@ -100,7 +93,6 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
 
   const pageCount = computed(() => template.value?.pages ?? 1)
 
-  /** Props for the template component: form values over `{{Field Label}}` tokens, plus the organisation's branding. */
   const renderedProps = computed<Record<string, unknown>>(() => {
     const active = template.value
     if (!active || !schema.value) return {}
@@ -119,8 +111,7 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
       form.reset({})
       return
     }
-    const json = parseSchemaToJsonSchema(next.schema, next.placeholders)
-    form.reset(withDefaults(schemaDefaults(json), emptyValue(json)) as Values)
+    form.reset(initialValues(next))
   }
 
   function setValue(path: (string | number)[], value: unknown) {
@@ -140,7 +131,6 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
 
   watch(organization, () => (organizationSaved.value = false), { deep: true, flush: 'sync' })
 
-  // Web fonts: load the brand font whenever it changes so the stage and exports use it
   watch(
     () => organization.font,
     (family) => {

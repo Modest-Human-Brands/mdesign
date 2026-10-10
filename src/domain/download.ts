@@ -10,11 +10,6 @@ export function safeFileName(name: string, fallback = 'document'): string {
   return cleaned === '' ? fallback : cleaned
 }
 
-export function pdfFileName(name: string): string {
-  const base = safeFileName(name).replace(/\.pdf$/i, '')
-  return `${base}.pdf`
-}
-
 export function saveBlob(blob: Blob, fileName: string): void {
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
@@ -25,10 +20,4 @@ export function saveBlob(blob: Blob, fileName: string): void {
   link.click()
   link.remove()
   useTimeoutFn(() => URL.revokeObjectURL(url), 10_000)
-}
-
-export async function blobFromUrl(url: string): Promise<Blob> {
-  const response = await fetch(url)
-  if (!response.ok) throw new Error(`Download failed (${response.status}).`)
-  return await response.blob()
 }

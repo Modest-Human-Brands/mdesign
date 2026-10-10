@@ -1,18 +1,15 @@
-// Browser-native rasterisation: the rendered design element is serialised into an SVG <foreignObject>,
-// with the page's CSS and the fonts it uses embedded as data URIs, then drawn onto a canvas for raster formats.
 export type ExportFormat = 'png' | 'webp' | 'jpeg' | 'svg'
 
-export interface ExportOptions {
+interface ExportOptions {
   element: HTMLElement
   width: number
   height: number
   format: ExportFormat
-  /** Pixel multiplier: 1 = design size, 2 = retina, ~4.17 = 300 DPI for a 72 DPI design. */
   scale?: number
   quality?: number
 }
 
-export const EXPORT_MIME: Record<ExportFormat, string> = {
+const EXPORT_MIME: Record<ExportFormat, string> = {
   png: 'image/png',
   webp: 'image/webp',
   jpeg: 'image/jpeg',
@@ -53,7 +50,6 @@ function readRules(sheet: CSSStyleSheet): CSSRule[] {
   }
 }
 
-/** Same-origin CSS of the page, with only the @font-face rules the markup actually uses. */
 async function collectCss(markup: string): Promise<string> {
   const rules: string[] = []
   const fontFaces: CSSFontFaceRule[] = []
@@ -83,21 +79,17 @@ async function collectCss(markup: string): Promise<string> {
       for (const url of urls) {
         try {
           css = css.replaceAll(url, await toDataUrl(new URL(url, document.baseURI).href))
-        } catch {
-          // A font that cannot be embedded falls back to the next family
-        }
+        } catch {}
       }
       return css
     }),
   )
 
-  // Theme variables live on :root / :host; inside the exported document the wrapper plays that role
   return [...embedded, ...rules]
     .join('\n')
     .replaceAll(/(^|[\s,{}>+~])(?::root|:host|html|body)(?![\w-])/g, '$1.mdesign-export')
 }
 
-/** Replaces every <img src> with an inlined data URI so the SVG renders without network access. */
 async function inlineImages(root: HTMLElement): Promise<void> {
   await Promise.all(
     [...root.querySelectorAll('img')].map(async (image) => {
@@ -112,11 +104,7 @@ async function inlineImages(root: HTMLElement): Promise<void> {
   )
 }
 
-export async function buildSvg(
-  element: HTMLElement,
-  width: number,
-  height: number,
-): Promise<string> {
+async function buildSvg(element: HTMLElement, width: number, height: number): Promise<string> {
   const clone = element.cloneNode(true) as HTMLElement
   clone.style.width = `${width}px`
   clone.style.height = `${height}px`
@@ -155,10 +143,9 @@ function loadImage(url: string): Promise<HTMLImageElement> {
   })
 }
 
-export async function exportElementToBlob(options: ExportOptions): Promise<Blob> {
+async function exportElementToBlob(options: ExportOptions): Promise<Blob> {
   const { element, width, height, format, scale = 2, quality = 0.95 } = options
 
-  // Make sure web fonts are ready before the design is serialised
   await document.fonts.ready
 
   const svg = await buildSvg(element, width, height)
@@ -177,7 +164,6 @@ export async function exportElementToBlob(options: ExportOptions): Promise<Blob>
     context.fillRect(0, 0, canvas.width, canvas.height)
   }
 
-  // A data URI (not a blob: URL) keeps the canvas untainted so it can be exported
   const image = await loadImage(svgToDataUri(svg))
   context.drawImage(image, 0, 0, canvas.width, canvas.height)
 
@@ -193,26 +179,18 @@ export async function exportElementToBlob(options: ExportOptions): Promise<Blob>
   })
 }
 export interface PagesExportOptions {
-  /** The rendered pages at full design resolution, in order. */
   elements: HTMLElement[]
-  /** Size of one page in design pixels. */
   pageWidth: number
   pageHeight: number
   format: ExportFormat
   scale?: number
   quality?: number
-  /** Space between pages and around the sheet; default 6% of the page width. */
   spacing?: number
   background?: string
 }
 
-/** Page spacing that leaves enough room to cut or fold between pages. */
 export const pageSpacing = (pageWidth: number) => Math.round(pageWidth * 0.06)
 
-/**
- * Exports every page as one tall image with `spacing` between pages and around the sheet.
- * A single page is exported as is, without the surrounding space.
- */
 export async function exportPagesToBlob(options: PagesExportOptions): Promise<Blob> {
   const { elements, pageWidth, pageHeight, format, scale, quality } = options
   const [only] = elements

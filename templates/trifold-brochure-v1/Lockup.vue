@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Logo + uppercase business name. Without a logo an accent-coloured circle holds the place.
 const props = defineProps<{ name: string; logo: string; color: string; accent: string }>()
 
 const SIZE = 40

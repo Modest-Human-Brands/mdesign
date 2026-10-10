@@ -26,7 +26,6 @@ defineProps<{
     class="leading-normal relative size-full overflow-hidden bg-white text-[#0f172a]"
     :style="{ fontFamily: organizationFont }"
   >
-    <!-- Hero -->
     <header
       class="absolute inset-x-0 top-0 h-[820px] rounded-b-[80px] text-white"
       :style="{ background: gradient }"
@@ -58,7 +57,6 @@ defineProps<{
       >{{ offer }}</span
     >
 
-    <!-- Optional image -->
     <img
       v-if="heroImage"
       :src="heroImage"
@@ -66,7 +64,6 @@ defineProps<{
       class="absolute top-[900px] right-[72px] left-[72px] h-[300px] w-[1056px] rounded-[32px] object-cover"
     />
 
-    <!-- Features -->
     <ul
       class="absolute right-[72px] left-[72px] flex flex-col gap-[38px]"
       :style="{ top: heroImage ? '1250px' : '930px' }"
@@ -82,7 +79,6 @@ defineProps<{
       </li>
     </ul>
 
-    <!-- Call to action + footer -->
     <span
       class="absolute right-[72px] bottom-[260px] left-[72px] flex h-[110px] items-center justify-center rounded-full text-[44px] font-bold"
       :style="{ backgroundColor: colorPrimary, color: onPrimary }"
