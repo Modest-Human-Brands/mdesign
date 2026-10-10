@@ -1,6 +1,6 @@
 # MDesign
 
-> A client-only design studio for brochures, visiting cards, standees, flyers and 2D social cards. Pick a template, apply your brand, edit the content and export PNG, WebP, JPEG or SVG, all in the browser. No backend, no uploads.
+> A client-only design studio for brochures, visiting cards and 2D social cards. Pick a template, apply your brand, edit the content and export PNG, WebP, JPEG or SVG, all in the browser. No backend, no uploads.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -25,11 +25,8 @@ MDesign is a static Vue 3 SPA (Vite, Pinia, Tailwind CSS v4, notform + Zod). The
 | :-------------------- | :--------- | :-------------- | :--------------------------------------- |
 | `trifold-brochure-v1` | Collateral | 2480 × 1748     | Three-panel landscape company brochure   |
 | `business-card-v1`    | Stationery | 1050 × 600      | Visiting card (3.5 × 2 in at 300 DPI)    |
-| `event-standee-v1`    | Display    | 800 × 2000      | Vertical roll-up banner                  |
-| `marketing-flyer-v1`  | Display    | 1200 × 1800     | Marketing flyer / pamphlet               |
 | `terminal-card-v1`    | Social     | 1600 × 900      | Developer quiz card styled as a terminal |
 | `director-hud-v1`     | Social     | 1920 × 1080     | Camera viewfinder / production HUD       |
-| `slate-clapper-v1`    | Social     | 1600 × 900      | Production slate (clapperboard) card     |
 
 Export scale is `1x`, `2x` or `300 DPI` (4.17x of the design grid); SVG ignores scale.
 

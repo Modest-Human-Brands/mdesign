@@ -92,3 +92,33 @@ export function generateProceduralGradient(
 
   return { baseColor, spots, cssStyle: `${layers.join(', ')}, ${baseColor}` }
 }
+export function generateFluidGradient(primaryHex: string, accentHex: string): string {
+  const [, , pL] = hexToHsl(normalizeHex(primaryHex))
+  const [aH, aS] = hexToHsl(normalizeHex(accentHex, '#5945ea'))
+  const saturation = Math.max(aS, 78)
+  const lightness = Math.min(Math.max(pL + 38, 52), 62)
+  const offsets = [70, 35, 0, -35, -70]
+  const neutral = aS < 12
+  const greys = [84, 74, 64, 54, 44]
+  const palette = offsets.map((offset, index) =>
+    neutral
+      ? hslToHex(0, 0, greys[index]!)
+      : hslToHex((aH + offset + 360) % 360, saturation, lightness),
+  )
+
+  const rows = [
+    { y: 0, xs: [8, 36, 64, 92] },
+    { y: 24, xs: [22, 52, 80] },
+    { y: 50, xs: [6, 34, 66, 94] },
+    { y: 76, xs: [20, 50, 82] },
+    { y: 100, xs: [10, 38, 64, 90] },
+  ]
+  const layers = rows.flatMap((row, index) =>
+    row.xs.map(
+      (x) =>
+        `radial-gradient(ellipse 24% 42% at ${x}% ${row.y}%, ${palette[index]}f2 0%, ${palette[index]}00 100%)`,
+    ),
+  )
+  const stops = palette.map((color, index) => `${color} ${index * 25}%`).join(', ')
+  return `${layers.join(', ')}, linear-gradient(180deg, ${stops})`
+}

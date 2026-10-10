@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useGoogleFont } from '../useGoogleFont'
-
 defineProps<{
   organizationName: string
   organizationLogo: string
@@ -18,9 +16,6 @@ defineProps<{
   iso: string
 }>()
 
-useGoogleFont('JetBrains Mono')
-
-const MONO = "'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace"
 const corner = [
   'top-[70px] left-[70px] border-t-[5px] border-l-[5px]',
   'top-[70px] right-[70px] border-t-[5px] border-r-[5px]',
@@ -32,7 +27,7 @@ const corner = [
 <template>
   <div
     class="leading-normal relative size-full overflow-hidden bg-black text-white/90"
-    :style="{ background: gradient, fontFamily: MONO }"
+    :style="{ background: gradient, fontFamily: organizationFont }"
   >
     <div class="absolute inset-0 bg-black/40" />
     <div class="absolute inset-x-0 bottom-0 h-[45%] bg-black/45" />

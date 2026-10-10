@@ -10,7 +10,7 @@ interface OutputResolution {
   dpi?: number
 }
 
-type TemplateCategory = 'Collateral' | 'Social' | 'Stationery' | 'Display'
+type TemplateCategory = 'Collateral' | 'Social' | 'Stationery'
 
 // oxlint-disable-next-line typescript/no-explicit-any
 type TemplateValues = Record<string, any>

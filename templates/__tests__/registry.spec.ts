@@ -11,15 +11,7 @@ describe('template registry', () => {
       getAllTemplates()
         .map((t) => t.id)
         .sort(),
-    ).toEqual([
-      'business-card-v1',
-      'director-hud-v1',
-      'event-standee-v1',
-      'marketing-flyer-v1',
-      'slate-clapper-v1',
-      'terminal-card-v1',
-      'trifold-brochure-v1',
-    ])
+    ).toEqual(['business-card-v1', 'director-hud-v1', 'terminal-card-v1', 'trifold-brochure-v1'])
     expect(getTemplate('missing')).toBeUndefined()
   })
 

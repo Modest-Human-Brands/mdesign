@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { resolveDecor } from '@/domain/decor'
-import { SOCIAL_KEYS } from '@/domain/organization'
+import { NEUTRAL_ORGANIZATION_ID, SOCIAL_KEYS, type SocialKey } from '@/domain/organization'
 import { SOCIAL_LABELS, socialEntries } from '@/domain/social'
 import { realText, token } from '@/domain/tokens'
 
@@ -42,34 +42,34 @@ export const schema = z.object({
 
 const placeholders = {
   cover: {
-    eyebrow: 'Capabilities 2026',
-    title: 'Stories worth watching',
-    description: 'Production services, from pitch to final delivery.',
+    eyebrow: 'Eyebrow',
+    title: 'Brochure title',
+    description: 'Short description of the brochure goes here.',
   },
   flap: {
-    heading: 'What we do',
-    text: 'We are a small production house that takes a film from first idea to final delivery. Our team handles scripting, shoot, edit and post under one roof, so every project keeps a single, clear point of view.',
+    heading: 'Section heading',
+    text: 'Section text goes here. Describe your business, services or offer in a few short lines.',
   },
   insideLeft: {
-    heading: 'What we do',
-    text: 'We are a small production house that takes a film from first idea to final delivery. Our team handles scripting, shoot, edit and post under one roof, so every project keeps a single, clear point of view.',
+    heading: 'Section heading',
+    text: 'Section text goes here. Describe your business, services or offer in a few short lines.',
   },
   insideRight: {
-    heading: 'How we work',
-    text: 'Every film starts with a short discovery call. We agree the brief, the budget and a timeline, then move through script, shoot and edit with a clear review step at each stage.',
+    heading: 'Section heading',
+    text: 'Section text goes here. Describe your business, services or offer in a few short lines.',
   },
   services: {
-    heading: 'Services',
-    items: ['Brand films', 'Ad campaigns', 'Documentary and series'],
+    heading: 'Section heading',
+    items: ['List item one', 'List item two', 'List item three'],
     imageUrl: '',
-    imageCaption: 'A frame from our latest shoot',
+    imageCaption: 'Image caption',
   },
   decor: { image: 'builtin:leaf', tint: 'none' },
   callToAction: {
-    label: 'Start a project',
-    phone: '+91 22 4000 1234',
-    note: 'Mon to Sat, 10am to 7pm',
-    socialLabel: 'Follow us',
+    label: 'Call to action',
+    phone: 'Phone number',
+    note: 'Supporting note',
+    socialLabel: 'Section label',
   },
 }
 
@@ -100,13 +100,15 @@ export default {
           : undefined
 
     const filled = socialEntries(org.socials)
+    const socialHandleFor = (key: SocialKey) =>
+      org.id === NEUTRAL_ORGANIZATION_ID ? '' : token(`${SOCIAL_LABELS[key]} Username`)
     const socials =
-      filled.length > 0
+      filled.length > 0 && org.id !== NEUTRAL_ORGANIZATION_ID
         ? filled
         : SOCIAL_KEYS.map((key) => ({
             key,
             label: SOCIAL_LABELS[key],
-            handle: token(`${SOCIAL_LABELS[key]} Username`),
+            handle: socialHandleFor(key),
           }))
 
     return {

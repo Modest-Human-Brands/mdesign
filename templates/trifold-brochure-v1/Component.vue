@@ -51,6 +51,13 @@ const SOCIAL_ICONS = {
   youtube: IconYoutube,
 }
 
+const ICON_SIZE: Record<SocialKey, number> = {
+  instagram: 10,
+  facebook: 10,
+  linkedin: 10,
+  youtube: 10,
+}
+
 const MUTED = '#3D3D3D'
 const NEUTRAL = '#D9D9D9'
 const tint = computed(() => `${props.colorAccent}33`)
@@ -207,9 +214,18 @@ const body = { fontSize: '12px', lineHeight: 1.5 }
                   color: '#FFFFFF',
                 }"
               >
-                <component :is="SOCIAL_ICONS[social.key]" style="width: 11px; height: 11px" />
+                <component
+                  :is="SOCIAL_ICONS[social.key]"
+                  :style="{
+                    display: 'block',
+                    flexShrink: 0,
+                    width: `${ICON_SIZE[social.key]}px`,
+                    height: `${ICON_SIZE[social.key]}px`,
+                  }"
+                />
               </div>
               <div
+                v-if="social.handle"
                 :style="{
                   flex: 1,
                   minWidth: 0,

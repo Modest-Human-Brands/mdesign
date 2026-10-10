@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { tokensFor } from '@/domain/tokens'
-import { useDesignWizardStore } from '@/stores/designWizard'
+import { neutralOrganization } from '@/domain/organization'
 import type { DesignTemplateDefinition } from '@templates/types'
 
 const props = defineProps<{ template: DesignTemplateDefinition }>()
-
-const wizard = useDesignWizardStore()
 
 const MAX_WIDTH = 160
 const MAX_HEIGHT = 140
@@ -22,12 +19,10 @@ const size = computed(() => ({
   width: props.template.resolution.width * scale.value,
   height: props.template.resolution.height * scale.value,
 }))
-const payload = computed(() =>
-  props.template.transformPayload(
-    tokensFor(props.template.id, props.template.schema, props.template.placeholders),
-    wizard.organization,
-  ),
-)
+const payload = computed(() => ({
+  ...props.template.transformPayload(props.template.placeholders, neutralOrganization),
+  ...((props.template.pages ?? 1) > 1 ? { page: 0 } : {}),
+}))
 </script>
 
 <template>

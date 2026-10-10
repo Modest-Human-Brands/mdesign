@@ -76,7 +76,10 @@ async function next() {
     </template>
 
     <template #preview>
-      <StageViewport :label="selected ? `Preview · ${selected.shortLabel} · Sample` : 'Preview'" />
+      <StageViewport
+        sample
+        :label="selected ? `Preview · ${selected.shortLabel} · Sample` : 'Preview'"
+      />
     </template>
   </WizardShell>
 </template>

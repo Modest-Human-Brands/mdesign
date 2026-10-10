@@ -1,86 +1,81 @@
 <script setup lang="ts">
-import { useGoogleFont } from '../useGoogleFont'
+import { computed } from 'vue'
 
-defineProps<{
-  organizationName: string
-  organizationLogo: string
+const props = defineProps<{
   organizationFont: string
-  colorAccent: string
-  onAccent: string
-  gradient: string
-  topic: string
+  fluidGradient: string
+  fileName: string
   question: string
-  options: string[]
-  hint: string
-  handle: string
+  footerLeft: string
+  footerRight: string
 }>()
 
-useGoogleFont('JetBrains Mono')
+const MAX_CHARS = 56
+const MAX_LINES = 5
+const LINE_HEIGHT = 34
 
-const MONO = "'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace"
-const LETTERS = ['A', 'B', 'C', 'D']
+function wrap(value: string): string[] {
+  const lines: string[] = []
+  for (const paragraph of value.split('\n')) {
+    let line = ''
+    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
+      const chunks = word.match(new RegExp(`.{1,${MAX_CHARS}}`, 'g')) ?? [word]
+      for (const chunk of chunks) {
+        if (line && `${line} ${chunk}`.length > MAX_CHARS) {
+          lines.push(line)
+          line = chunk
+        } else {
+          line = line ? `${line} ${chunk}` : chunk
+        }
+      }
+    }
+    lines.push(line)
+  }
+  if (lines.length <= MAX_LINES) return lines
+  const kept = lines.slice(0, MAX_LINES)
+  kept[MAX_LINES - 1] = `${kept[MAX_LINES - 1]!.slice(0, MAX_CHARS - 1)}…`
+  return kept
+}
+
+const lines = computed(() => wrap(props.question))
+const bodyHeight = computed(() => Math.max(lines.value.length, 2) * LINE_HEIGHT + 92)
 </script>
 
 <template>
   <div
-    class="leading-normal relative size-full overflow-hidden bg-[#05070F] text-white"
-    :style="{ background: gradient }"
+    class="relative size-full overflow-hidden leading-normal text-white"
+    :style="{ background: fluidGradient, fontFamily: organizationFont }"
   >
-    <div class="absolute inset-0 bg-[#05070F]/70" />
+    <div class="absolute top-1/2 right-[102px] left-[102px] -translate-y-1/2">
+      <div
+        class="overflow-hidden rounded-[22px] border border-black/25 bg-[#2A2F3E] shadow-[0_18px_50px_rgba(0,0,0,0.35)]"
+      >
+        <div class="relative flex h-[70px] items-center gap-4 px-[22px]">
+          <span class="size-5 rounded-full bg-[#FF5F57]" />
+          <span class="size-5 rounded-full bg-[#FEBC2E]" />
+          <span class="size-5 rounded-full bg-[#28C840]" />
+          <span class="absolute inset-x-0 text-center text-[22px] text-[#6B7385]">{{
+            fileName
+          }}</span>
+        </div>
 
-    <div
-      class="absolute top-[70px] right-[90px] bottom-[70px] left-[90px] flex flex-col overflow-hidden rounded-[22px] border-2 border-[#1e293b] bg-[#0D1220] shadow-[0_24px_60px_rgba(0,0,0,0.6)]"
-      :style="{ fontFamily: MONO }"
-    >
-      <header class="relative flex h-16 shrink-0 items-center gap-3 bg-[#111827] px-7">
-        <span class="size-4 rounded-full bg-[#FF5F57]" />
-        <span class="size-4 rounded-full bg-[#FEBC2E]" />
-        <span class="size-4 rounded-full bg-[#28C840]" />
-        <span class="absolute inset-x-0 text-center text-[20px] text-[#64748b]"
-          >quiz — {{ topic.toLowerCase() }} — 80x24</span
-        >
-      </header>
-
-      <div class="flex min-h-0 flex-1 flex-col px-14 pt-9">
-        <p class="truncate text-[26px] text-[#4ade80]">$ quiz --topic "{{ topic }}"</p>
-        <h1 class="mt-5 line-clamp-3 text-[46px] leading-[62px] font-bold text-[#f8fafc]">
-          {{ question }}
-        </h1>
-
-        <div class="mt-auto grid grid-cols-2 gap-6 pb-7">
+        <div class="flex flex-col justify-center pr-12 pl-7" :style="{ height: `${bodyHeight}px` }">
           <div
-            v-for="(option, index) in options"
+            v-for="(line, index) in lines"
             :key="index"
-            class="flex h-[76px] items-center gap-5 rounded-[14px] border-2 border-[#243049] bg-[#111A2E] px-4"
+            class="flex items-baseline whitespace-pre"
+            :style="{ height: `${LINE_HEIGHT}px`, fontVariantLigatures: 'none' }"
           >
-            <span
-              class="flex size-11 shrink-0 items-center justify-center rounded-[10px] text-[26px] font-bold"
-              :style="{ backgroundColor: colorAccent, color: onAccent }"
-              >{{ LETTERS[index] }}</span
-            >
-            <span class="truncate text-[28px] text-[#e2e8f0]">{{ option }}</span>
+            <span class="w-12 shrink-0 text-[16px] text-[#6B7385]">{{ index + 1 }}</span>
+            <span class="text-[25px] text-[#C9CED9]">{{ line }}</span>
           </div>
         </div>
-        <p class="truncate pb-6 text-[22px] text-[#64748b]">// hint: {{ hint }}</p>
       </div>
 
-      <footer
-        class="flex h-16 shrink-0 items-center justify-between bg-[#0A0F1C] px-14"
-        :style="{ fontFamily: organizationFont }"
-      >
-        <span class="flex items-center gap-4">
-          <img
-            v-if="organizationLogo"
-            :src="organizationLogo"
-            alt=""
-            class="size-10 object-contain"
-          />
-          <span class="text-[24px] font-bold text-[#f8fafc]">{{ organizationName }}</span>
-        </span>
-        <span class="text-[22px]" :style="{ color: colorAccent, fontFamily: MONO }">{{
-          handle
-        }}</span>
-      </footer>
+      <div class="mt-7 flex items-center justify-between px-[2px] text-[25px] font-medium">
+        <span>{{ footerLeft }}</span>
+        <span>{{ footerRight }}</span>
+      </div>
     </div>
   </div>
 </template>

@@ -1,15 +1,16 @@
 import { z } from 'zod'
 
-import { brandProps, list, text } from '../brand'
+import { brandProps, text } from '../brand'
 import type { DesignTemplateDefinition } from '../types'
 import Component from './Component.vue'
 
 export const schema = z.object({
-  topic: z.string().min(1, 'Topic is required'),
+  fileName: z.string().optional(),
   question: z.string().min(1, 'Question is required'),
-  options: z.array(z.string()).min(2).max(4),
-  hint: z.string().optional(),
-  handle: z.string().optional(),
+  footer: z.object({
+    left: z.string().optional(),
+    right: z.string().optional(),
+  }),
 })
 
 export default {
@@ -18,23 +19,21 @@ export default {
   shortLabel: 'Terminal Card',
   category: 'Social',
   description:
-    'A 16:9 developer quiz card styled as a terminal window, with lettered answer options.',
-  resolution: { width: 1600, height: 900, aspectRatio: '16 / 9' },
+    'A code-editor window with numbered lines on a fluid brand gradient, with a caption line underneath.',
+  resolution: { width: 1280, height: 520, aspectRatio: '32 / 13' },
   component: Component,
   schema,
   placeholders: {
-    topic: 'JavaScript',
-    question: 'What does this print?  console.log(0.1 + 0.2 === 0.3)',
-    options: ['true', 'false', 'undefined', 'TypeError'],
-    hint: 'Floating point numbers are stored in binary.',
-    handle: '@modesthumanbrands',
+    fileName: '~/question.md',
+    question:
+      'I never got ask you what you think about @tanstack/vue-query? Does it have a place in a nuxt application?',
+    footer: { left: 'yourname.dev/ask', right: 'asked 2 weeks ago' },
   },
   transformPayload: (values, org) => ({
     ...brandProps(org),
-    topic: text(values.topic),
+    fileName: text(values.fileName),
     question: text(values.question),
-    options: list(values.options, 4),
-    hint: text(values.hint),
-    handle: text(values.handle),
+    footerLeft: text(values.footer?.left),
+    footerRight: text(values.footer?.right),
   }),
 } satisfies DesignTemplateDefinition

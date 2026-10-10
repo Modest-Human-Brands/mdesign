@@ -2,7 +2,7 @@
   "name": "mdesign",
   "version": "0.0.5",
   "private": true,
-  "description": "Client-side design studio for brochures, cards, standees, flyers and social collateral. Exports PNG, WebP, JPEG and SVG in the browser.",
+  "description": "Client-side design studio for brochures, cards and social collateral. Exports PNG, WebP, JPEG and SVG in the browser.",
   "license": "MIT",
   "author": "Shirsendu Bairagi <shirsendu2001@gmail.com>",
   "repository": {

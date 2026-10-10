@@ -9,6 +9,7 @@ import StageToolbar from './StageToolbar.vue'
 const props = defineProps<{
   label: string
   showDownload?: boolean
+  sample?: boolean
   downloadDisabled?: boolean
 }>()
 
@@ -56,8 +57,9 @@ defineExpose({
 
 const label = computed(() => props.label)
 
+const baseProps = computed(() => (props.sample ? wizard.sampleProps : wizard.renderedProps))
 const pageProps = (index: number) =>
-  pageCount.value > 1 ? { ...wizard.renderedProps, page: index } : wizard.renderedProps
+  pageCount.value > 1 ? { ...baseProps.value, page: index } : baseProps.value
 </script>
 
 <template>

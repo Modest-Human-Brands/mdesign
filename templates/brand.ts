@@ -1,4 +1,9 @@
-import { generateProceduralGradient, normalizeHex, onColor } from '@/domain/proceduralGradient'
+import {
+  generateFluidGradient,
+  generateProceduralGradient,
+  normalizeHex,
+  onColor,
+} from '@/domain/proceduralGradient'
 import type { OrganizationProfile } from '@/domain/organization'
 import { token } from '@/domain/tokens'
 
@@ -12,6 +17,7 @@ export interface BrandProps {
   onPrimary: string
   onAccent: string
   gradient: string
+  fluidGradient: string
   organizationPhone: string
   organizationEmail: string
   organizationWebsite: string
@@ -37,6 +43,7 @@ export function brandProps(org: OrganizationProfile): BrandProps {
     onPrimary: onColor(primary),
     onAccent: onColor(accent),
     gradient: generateProceduralGradient(primary, accent).cssStyle,
+    fluidGradient: generateFluidGradient(primary, accent),
     organizationPhone: org.phone.trim() || token('Phone'),
     organizationEmail: org.contactEmail.trim() || token('Contact Email'),
     organizationWebsite:

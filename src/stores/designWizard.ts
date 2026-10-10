@@ -6,6 +6,7 @@ import { useNotForm } from 'notform'
 import { loadGoogleFont } from '@/domain/fonts'
 import { buildFormSchema, emptyFormSchema, validateForm } from '@/domain/formSchema'
 import {
+  neutralOrganization,
   loadOrganization,
   saveOrganization,
   DEFAULT_FONT,
@@ -101,6 +102,11 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
     return active.transformPayload(mergeOver(tokens, payload) as Values, organization)
   })
 
+  const sampleProps = computed<Record<string, unknown>>(() => {
+    const active = template.value
+    return active ? active.transformPayload(active.placeholders, neutralOrganization) : {}
+  })
+
   function selectTemplate(id: string | null) {
     if (templateId.value === id) return
     templateId.value = id
@@ -160,6 +166,7 @@ export const useDesignWizardStore = defineStore('designWizard', () => {
     problems,
     submitAttempted,
     renderedProps,
+    sampleProps,
     pageCount,
     selectTemplate,
     setValue,
