@@ -1,0 +1,39 @@
+$kind: http-request
+description: >-
+  Stateless production render to SVG. Output is the template width and height multiplied by dpi (default 2, max 3). Missing variables fall back to the template placeholders.
+url: '{{base_url}}/api/render?format=svg&dpi=1'
+method: POST
+queryParams:
+  - key: format
+    value: 'svg'
+  - key: dpi
+    value: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "business-card-v1",
+      "organizationId": "modest-human-brands",
+      "variables": {
+        "person": {
+          "name": "Aarav Sharma",
+          "title": "Creative Director",
+          "phone": "+91 99999 99999",
+          "email": "aarav@modesthumanbrands.com"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", () => pm.response.to.have.status(200));
+      pm.test("Content-Type is image/svg+xml", () => pm.expect(pm.response.headers.get("Content-Type")).to.include("image/svg+xml"));
+      pm.test("Size headers are present", () => {
+        pm.expect(Number(pm.response.headers.get("X-Image-Width"))).to.eql(1050);
+        pm.expect(Number(pm.response.headers.get("X-Image-Height"))).to.eql(600);
+      });
+order: 5000

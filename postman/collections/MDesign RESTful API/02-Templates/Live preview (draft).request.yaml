@@ -1,0 +1,33 @@
+$kind: http-request
+description: >-
+  Never rejects partial input. Unfilled fields show their Field Label token; invalid fields fall back and are reported in warnings[{field,message,code}]. Call it on every keystroke.
+url: '{{base_url}}/api/template/preview?draft=true'
+method: POST
+queryParams:
+  - key: draft
+    value: 'true'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "terminal-card-v1",
+      "variables": {
+        "question": "What does typeof null return?",
+        "options": "not-a-list"
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", () => pm.response.to.have.status(200));
+      pm.test("Returns a base64 PNG and the resolution", () => {
+        const body = pm.response.json();
+        pm.expect(body.imageBase64).to.match(/^data:image\/png;base64,/);
+        pm.expect(body.resolution).to.include.keys("width", "height", "aspectRatio");
+      });
+      pm.test("Invalid field is reported as a warning", () => pm.expect(pm.response.json().warnings.map((w) => w.field)).to.include("options"));
+order: 4500

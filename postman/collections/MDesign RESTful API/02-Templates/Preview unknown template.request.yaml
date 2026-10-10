@@ -1,0 +1,20 @@
+$kind: http-request
+description: >-
+  An unknown templateId returns 404.
+url: '{{base_url}}/api/template/preview'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "does-not-exist"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 404", () => pm.response.to.have.status(404));
+order: 6000

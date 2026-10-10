@@ -1,0 +1,59 @@
+{
+  "name": "mdesign",
+  "version": "0.3.12",
+  "description": "A declarative, server-side visual design engine that renders brochures, posters, cards, standees and social collateral to PNG, WebP, JPEG, GIF and SVG.",
+  "author": "Shirsendu Bairagi <shirsendu2001@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Modest-Human-Brands/mdesign.git"
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": "^22.11.0 || ^24.14.0",
+    "pnpm": "^9.15.0 || ^10.2.0",
+    "bun": "^1.2.9"
+  },
+  "packageManager": "bun@1.3.14",
+  "scripts": {
+    "prepare": "husky || true",
+    "postinstall": "nitro prepare",
+    "dev": "nitro dev",
+    "detect": "gitleaks git --verbose",
+    "lint": "eslint . --fix",
+    "format": "prettier . --write",
+    "test:load": "k6 run tests/load.test.ts",
+    "build": "nitro build",
+    "generate": "nitro generate",
+    "preview": "nitro preview",
+    "start": "node --env-file=.env.prod .output/server/index.mjs",
+    "clean": "nitro cleanup",
+    "docker:build": "docker build --build-arg VERSION=dev --build-arg BUILD_TIME=now -t mdesign:dev .",
+    "docker:start": "docker run --detach --name mdesign-dev --env-file .env.prod -p 3500:3000 mdesign:dev",
+    "samples": "nitro task run templates:sample-images"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.2",
+    "date-fns": "^4.4.0",
+    "magic-regexp": "^0.11.0",
+    "nitro": "^3.0.260610-beta",
+    "nitro-mcp-toolkit": "^0.2.0",
+    "sharp": "^0.35.3",
+    "unifont": "^1.0.2",
+    "unplugin-vue": "^7.2.0",
+    "vue": "^3.5.39",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@dotenvx/dotenvx": "^2.6.0",
+    "@types/bun": "^1.3.14",
+    "eslint": "^10.7.0",
+    "eslint-config-unjs": "^0.6.2",
+    "husky": "^9.1.7",
+    "prettier": "^3.9.5",
+    "typescript": "^6.0.3"
+  }
+}

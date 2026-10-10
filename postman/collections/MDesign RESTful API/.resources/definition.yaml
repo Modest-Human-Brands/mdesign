@@ -1,0 +1,7 @@
+$kind: collection
+description: |-
+  Operational API collection for MDesign, a declarative server-side visual design engine.
+  Templates are Vue components painted with @napi-rs/canvas and encoded with Sharp to PNG, WebP, JPEG, GIF or SVG.
+variables:
+  base_url: http://localhost:3000
+  template_id: business-card-v1
