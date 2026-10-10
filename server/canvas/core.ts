@@ -161,7 +161,7 @@ function paintText(node: CanvasNode, ctx: SKRSContext2D, state: PaintState) {
 
   const lines = clampLines(ctx, wrapAndMeasureText(ctx, content, s.maxWidth), s.maxLines, s.maxWidth)
   // With a maxWidth the text is aligned inside that column; without one `x` is the anchor itself
-  const anchorX = s.maxWidth ? x + (align === 'center' ? s.maxWidth / 2 : (align === 'right' ? s.maxWidth : 0)) : x
+  const anchorX = s.maxWidth ? x + (align === 'center' ? s.maxWidth / 2 : align === 'right' ? s.maxWidth : 0) : x
 
   // Centre the glyphs inside the line box so lineHeight behaves like CSS
   const offsetY = Math.max(0, (lineHeight - fontSize) / 2)
