@@ -10,7 +10,7 @@
 
 MDesign is a static Vue 3 SPA (Vite, Pinia, Tailwind CSS v4, notform + Zod). The wizard has four steps: **Template → Brand → Content → Export**.
 
-- **Templates are Vue SFCs.** Each folder in `src/templates/` holds a `Component.vue` (the design, plain Vue + Tailwind) and an `index.ts` (metadata, resolution, Zod schema, sample placeholders, `transformPayload`). `registry.ts` discovers them with `import.meta.glob`, so adding a folder adds a template.
+- **Templates are Vue SFCs.** Each folder in `templates/` (project root) holds a `Component.vue` (the design, plain Vue + Tailwind) and an `index.ts` (metadata, resolution, Zod schema, sample placeholders, `transformPayload`). `registry.ts` discovers them with `import.meta.glob`, so adding a folder adds a template.
 - **Forms come from the schema.** `parseSchemaToJsonSchema()` converts a template's Zod schema to JSON Schema with layout hints; `SchemaFields` renders it and the same schema validates it.
 - **Instant preview.** The active template component is rendered at its design resolution inside `StageViewport` and scaled with CSS. Typing updates it synchronously.
 - **Auto-branded gradients.** `generateProceduralGradient(primary, accent)` derives a balanced HSL mesh from the brand colours (`src/domain/proceduralGradient.ts`).
@@ -34,7 +34,7 @@ Export scale is `1x`, `2x` or `300 DPI` (4.17x of the design grid); SVG ignores 
 ## Adding a template
 
 ```
-src/templates/my-card-v1/
+templates/my-card-v1/
 ├── Component.vue   # props = transformPayload() output, root fills the design size
 └── index.ts        # export default { id, label, shortLabel, category, description,
                     #   resolution, component, schema, placeholders, transformPayload }
@@ -45,7 +45,7 @@ Rules that keep exports faithful:
 - The root element fills its box (`size-full`) and sets its own text colour and `leading-normal`.
 - Use arbitrary colour values (`text-[#334155]`) because the app theme resets the Tailwind palette.
 - Images must be data URIs (the logo and uploads already are; `resolveDecor()` handles built-in decor).
-- Brand props (`organizationName`, `organizationLogo`, `colorPrimary`, `gradient`, ...) come from `brandProps(org)` in `src/templates/brand.ts`.
+- Brand props (`organizationName`, `organizationLogo`, `colorPrimary`, `gradient`, ...) come from `brandProps(org)` in `templates/brand.ts`.
 
 ## Getting started
 
@@ -66,4 +66,8 @@ Deploy `dist/` to any static host (Vercel, Cloudflare, Netlify) or use the Docke
 
 ## License
 
-Published under the [MIT License](./LICENSE).
+Published under the [MIT License](https://github.com/Modest-Human-Brands/mdesign/blob/main/LICENSE).
+<br><br>
+<a href="https://github.com/Modest-Human-Brands/mdesign/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=Modest-Human-Brands/mdesign" />
+</a>

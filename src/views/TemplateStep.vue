@@ -9,7 +9,7 @@ import UiFilterChip from '@/components/ui/UiFilterChip.vue'
 import UiTemplateCard from '@/components/ui/UiTemplateCard.vue'
 import WizardShell from '@/components/wizard/WizardShell.vue'
 import { STEPS, useDesignWizardStore } from '@/stores/designWizard'
-import { categoryFilters, getAllTemplates } from '@/templates/registry'
+import { categoryFilters, getAllTemplates } from '@templates/registry'
 
 defineOptions({ name: 'TemplateStep' })
 

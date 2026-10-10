@@ -22,8 +22,8 @@ import {
   type Values,
 } from '@/domain/schema'
 import type { JsonSchema } from '@/domain/types'
-import { getTemplate } from '@/templates/registry'
-import type { DesignTemplateDefinition } from '@/templates/types'
+import { getTemplate } from '@templates/registry'
+import type { DesignTemplateDefinition } from '@templates/types'
 
 export const STEPS = [
   { name: 'template', label: 'Template', path: '/studio/template' },

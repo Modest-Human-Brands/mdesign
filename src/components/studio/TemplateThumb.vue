@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 import { useDesignWizardStore } from '@/stores/designWizard'
-import type { DesignTemplateDefinition } from '@/templates/types'
+import type { DesignTemplateDefinition } from '@templates/types'
 
 const props = defineProps<{ template: DesignTemplateDefinition }>()
 
