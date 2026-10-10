@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.1.0
+
+### 🚀 Enhancements
+
+- Transform mdoc into mdesign canvas design engine ([93890ab](https://github.com/Modest-Human-Brands/mdesign/commit/93890ab))
+- ⚠️ Replace Nitro render server with client-only MDesign studio ([175415f](https://github.com/Modest-Human-Brands/mdesign/commit/175415f))
+- **templates:** Port the MDoc brochure design to the trifold brochure ([eb319b2](https://github.com/Modest-Human-Brands/mdesign/commit/eb319b2))
+- Multi-page designs, field tokens and social handles ([e8b2833](https://github.com/Modest-Human-Brands/mdesign/commit/e8b2833))
+- Enhance UI components with error handling and new features ([0d29da6](https://github.com/Modest-Human-Brands/mdesign/commit/0d29da6))
+
+### 💅 Refactors
+
+- Move templates to the project root ([edc956e](https://github.com/Modest-Human-Brands/mdesign/commit/edc956e))
+- Remove unused templates and components ([d1edf43](https://github.com/Modest-Human-Brands/mdesign/commit/d1edf43))
+
+### 🏡 Chore
+
+- Apply code fixes [skip ci] ([30a6c7f](https://github.com/Modest-Human-Brands/mdesign/commit/30a6c7f))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️ Replace Nitro render server with client-only MDesign studio ([175415f](https://github.com/Modest-Human-Brands/mdesign/commit/175415f))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi <shirsendu2001@gmail.com>
+- Shba007
+
 ## v0.3.12
 
 [compare changes](https://github.com/Modest-Human-Brands/mdoc/compare/v0.3.11...v0.3.12)
