@@ -1,6 +1,6 @@
 {
   "name": "mdesign",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Client-side design studio for brochures, cards and social collateral. Exports PNG, WebP, JPEG and SVG in the browser.",
   "license": "MIT",
