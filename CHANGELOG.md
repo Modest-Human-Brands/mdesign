@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.1.1
+
+[compare changes](https://github.com/Modest-Human-Brands/mdesign/compare/v0.1.0...v0.1.1)
+
+### 💅 Refactors
+
+- Update environment variables and dependencies ([1dd2728](https://github.com/Modest-Human-Brands/mdesign/commit/1dd2728))
+
+### 🏡 Chore
+
+- Remove .gitleaksignore file ([f934e4f](https://github.com/Modest-Human-Brands/mdesign/commit/f934e4f))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.1.0
 
 ### 🚀 Enhancements
